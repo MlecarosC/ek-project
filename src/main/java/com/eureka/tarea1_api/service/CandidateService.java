@@ -1,7 +1,9 @@
 package com.eureka.tarea1_api.service;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
+import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
 import com.eureka.tarea1_api.model.Candidate;
+import com.eureka.tarea1_api.repository.AnnexRepository;
 import com.eureka.tarea1_api.repository.CandidateRepository;
 
 import java.util.List;
@@ -14,10 +16,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CandidateService {
+    private final AnnexRepository annexRepository;
     private final CandidateRepository candidateRepository;
     private final ModelMapper modelMapper;
 
-    public CandidateService(CandidateRepository candidateRepository, ModelMapper modelMapper) {
+    public CandidateService(AnnexRepository annexRepository, CandidateRepository candidateRepository, ModelMapper modelMapper) {
+        this.annexRepository = annexRepository;
         this.candidateRepository = candidateRepository;
         this.modelMapper = modelMapper;
     }
@@ -50,5 +54,13 @@ public class CandidateService {
                 return true;
             }
         ).orElse(false);
+    }
+
+    public List<ResponseAnnexDTO> getAnnexesByCandidateId(Integer id) {
+        return annexRepository.findByCandidateId(id).stream().map(
+            annex -> {
+                return modelMapper.map(annex, ResponseAnnexDTO.class);
+            }
+        ).collect(Collectors.toList());
     }
 }

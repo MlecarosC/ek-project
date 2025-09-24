@@ -1,15 +1,18 @@
 package com.eureka.tarea1_api.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Entity
@@ -50,4 +53,7 @@ public class Candidate {
     private LocalDate availableStartDate;
     @Column(nullable = true)
     private LocalDate availableEndDate;
+    
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Annex> annexes;
 }

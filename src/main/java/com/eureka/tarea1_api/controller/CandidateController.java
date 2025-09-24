@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
+import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
 import com.eureka.tarea1_api.service.CandidateService;
 
 
@@ -52,5 +53,14 @@ public class CandidateController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/annexes")
+    public ResponseEntity<List<ResponseAnnexDTO>> getAnnexesByCandidateId(@PathVariable Integer id) {
+        List<ResponseAnnexDTO> annexesDTO = candidateService.getAnnexesByCandidateId(id);
+        if (annexesDTO.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(annexesDTO);
     }
 }
