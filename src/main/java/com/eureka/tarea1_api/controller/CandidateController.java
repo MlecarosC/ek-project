@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
 import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
+import com.eureka.tarea1_api.exception.NotFoundException;
 import com.eureka.tarea1_api.service.CandidateService;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -27,7 +30,7 @@ public class CandidateController {
     }
     
     @PostMapping
-    public ResponseEntity<CandidateDTO> save(@RequestBody CandidateDTO candidateDTO) {
+    public ResponseEntity<CandidateDTO> save(@RequestBody @Valid CandidateDTO candidateDTO) {
         return new ResponseEntity<>(candidateService.save(candidateDTO), HttpStatus.CREATED);
     }
 
@@ -35,7 +38,7 @@ public class CandidateController {
     public ResponseEntity<List<CandidateDTO>> findAll() {
         List<CandidateDTO> candidatesDTO = candidateService.findAll();
         if (candidatesDTO.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            throw new NotFoundException("No candidates found");
         }
         return ResponseEntity.ok(candidatesDTO);
     }
@@ -44,22 +47,22 @@ public class CandidateController {
     public ResponseEntity<CandidateDTO> findById(@PathVariable Integer id) {
         return candidateService.findById(id).map(
             ResponseEntity::ok
-        ).orElseGet(() -> ResponseEntity.notFound().build());
+        ).orElseThrow(
+            () -> new NotFoundException("No candidate with the given ID " + id)
+        );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        if (candidateService.deleteById(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        candidateService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/annexes")
     public ResponseEntity<List<ResponseAnnexDTO>> getAnnexesByCandidateId(@PathVariable Integer id) {
         List<ResponseAnnexDTO> annexesDTO = candidateService.getAnnexesByCandidateId(id);
         if (annexesDTO.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            throw new NotFoundException("No annexes found with the given candidate ID " + id);
         }
         return ResponseEntity.ok(annexesDTO);
     }

@@ -49,9 +49,9 @@ public class Candidate {
     private String country;
     @Column(length = 150, nullable = false)
     private String localization;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate availableStartDate;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate availableEndDate;
     
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)

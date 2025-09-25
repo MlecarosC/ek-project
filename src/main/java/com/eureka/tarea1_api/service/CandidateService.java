@@ -2,6 +2,7 @@ package com.eureka.tarea1_api.service;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
 import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
+import com.eureka.tarea1_api.exception.NotFoundException;
 import com.eureka.tarea1_api.model.Candidate;
 import com.eureka.tarea1_api.repository.AnnexRepository;
 import com.eureka.tarea1_api.repository.CandidateRepository;
@@ -47,13 +48,12 @@ public class CandidateService {
         );
     }
 
-    public boolean deleteById(Integer id) {
-        return candidateRepository.findById(id).map(
-            candidate -> {
-                candidateRepository.deleteById(id);
-                return true;
-            }
-        ).orElse(false);
+    public void deleteById(Integer id) {
+        Candidate candidate = candidateRepository.findById(id).orElseThrow(
+            () -> new NotFoundException("No candidate with the given ID " + id)
+        );
+
+        candidateRepository.delete(candidate);
     }
 
     public List<ResponseAnnexDTO> getAnnexesByCandidateId(Integer id) {
