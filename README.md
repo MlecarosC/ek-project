@@ -102,6 +102,29 @@ spring.sql.init.data-locations=classpath:data.sql
 
 La aplicación se ejecutará en `http://localhost:8080`
 
+## ⚠️ Importante: Comportamiento de Datos de Prueba
+
+La aplicación incluye **datos de prueba** que se cargan automáticamente cada vez que inicias la aplicación:
+
+- 4 candidatos de ejemplo con sus respectivos anexos
+- Los datos se insertan usando `INSERT IGNORE`, por lo que no se duplican
+
+**📝 Nota sobre eliminación de registros:**
+Si eliminas candidatos durante las pruebas y reinicias la aplicación, los candidatos eliminados se recrearán automáticamente, pero con **IDs superiores** (esto es el comportamiento normal de MySQL con AUTO_INCREMENT).
+
+**🛠️ Para evitar la carga automática de datos de prueba:**
+
+Edita tu archivo `application.properties` y cambia:
+```properties
+# Desactivar carga automática de datos
+spring.sql.init.mode=never
+```
+
+O comenta las líneas:
+```properties
+# spring.sql.init.data-locations=classpath:data.sql
+```
+
 ## Endpoints de la API
 
 ### Gestión de Candidatos (Entidad Principal)
@@ -268,6 +291,7 @@ La API incluye validaciones automáticas para todos los campos:
 ## Autor
 
 - **Desarrollador**: Martin Lecaros
+- **Programa**: Eureka 2025 - Desarrollador Full Stack
 
 </details>
 
@@ -376,6 +400,29 @@ spring.sql.init.data-locations=classpath:data.sql
 ```
 
 The application will run on `http://localhost:8080`
+
+## ⚠️ Important: Test Data Behavior
+
+The application includes **test data** that loads automatically every time you start the application:
+
+- 4 example candidates with their respective annexes
+- Data is inserted using `INSERT IGNORE`, so it won't duplicate
+
+**📝 Note about record deletion:**
+If you delete candidates during testing and restart the application, the deleted candidates will be recreated automatically, but with **higher IDs** (this is normal MySQL behavior with AUTO_INCREMENT).
+
+**🛠️ To prevent automatic test data loading:**
+
+Edit your `application.properties` file and change:
+```properties
+# Disable automatic data loading
+spring.sql.init.mode=never
+```
+
+Or comment out the lines:
+```properties
+# spring.sql.init.data-locations=classpath:data.sql
+```
 
 ## API Endpoints
 
@@ -543,5 +590,6 @@ The API includes automatic validations for all fields:
 ## Author
 
 - **Developer**: Martin Lecaros
+- **Program**: Eureka 2025 - Full Stack Developer
 
 </details>
