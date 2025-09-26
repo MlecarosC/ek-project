@@ -288,6 +288,16 @@ La API incluye validaciones automáticas para todos los campos:
 }
 ```
 
+### Error 409 - Conflicto email duplicado
+```json
+{
+    "timestamp": "2025-09-26",
+    "code": 409,
+    "message": "Email already exists",
+    "path": "/api/v1/candidates"
+}
+```
+
 ## Autor
 
 - **Desarrollador**: Martin Lecaros
@@ -584,6 +594,16 @@ The API includes automatic validations for all fields:
         "name": "Name is required",
         "email": "Email must be valid"
     }
+}
+```
+
+### Error 409 - Duplicated Email
+```json
+{
+    "timestamp": "2025-09-26",
+    "code": 409,
+    "message": "Email already exists",
+    "path": "/api/v1/candidates"
 }
 ```
 

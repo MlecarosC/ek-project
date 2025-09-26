@@ -3,6 +3,7 @@ package com.eureka.tarea1_api.service;
 import com.eureka.tarea1_api.dto.CandidateDTO;
 import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
 import com.eureka.tarea1_api.exception.NotFoundException;
+import com.eureka.tarea1_api.exception.UniqueEmailException;
 import com.eureka.tarea1_api.model.Candidate;
 import com.eureka.tarea1_api.repository.AnnexRepository;
 import com.eureka.tarea1_api.repository.CandidateRepository;
@@ -28,6 +29,9 @@ public class CandidateService {
     }
 
     public CandidateDTO save(CandidateDTO candidateDTO) {
+        if (candidateRepository.existsByEmail(candidateDTO.getEmail())) {
+            throw new UniqueEmailException("Email already exists");
+        }
         Candidate candidate = modelMapper.map(candidateDTO, Candidate.class);
         return modelMapper.map(candidateRepository.save(candidate), CandidateDTO.class);
     }

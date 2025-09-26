@@ -19,13 +19,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException exception, HttpServletRequest request) {
-        ErrorResponse errorRespone = new ErrorResponse(
+        ErrorResponse errorResponse = new ErrorResponse(
             LocalDate.now(),
             HttpStatus.NOT_FOUND.value(),
             exception.getMessage(),
             request.getRequestURI()
         );
-        return new ResponseEntity<>(errorRespone, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -45,5 +45,16 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UniqueEmailException.class)
+    public ResponseEntity<ErrorResponse> handleUniqueEmailException(UniqueEmailException exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            LocalDate.now(),
+            HttpStatus.CONFLICT.value(),
+            exception.getMessage(),
+            request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }
