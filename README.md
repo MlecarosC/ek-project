@@ -131,28 +131,28 @@ O comenta las líneas:
 
 #### Crear un candidato
 ```http
-POST /api/v1/candidates
+POST /api/v1/candidatos
 Content-Type: application/json
 ```
 
 #### Obtener todos los candidatos
 ```http
-GET /api/v1/candidates
+GET /api/v1/candidatos
 ```
 
 #### Obtener candidato por ID
 ```http
-GET /api/v1/candidates/{id}
+GET /api/v1/candidatos/{id}
 ```
 
 #### Eliminar candidato por ID
 ```http
-DELETE /api/v1/candidates/{id}
+DELETE /api/v1/candidatos/{id}
 ```
 
 #### Obtener anexos de un candidato
 ```http
-GET /api/v1/candidates/{id}/annexes
+GET /api/v1/candidatos/{id}/annexes
 ```
 
 ### Gestión de Anexos (Entidad Secundaria)
@@ -165,46 +165,46 @@ Los anexos se gestionan a través del endpoint de candidatos, manteniendo la rel
 
 **Request:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/candidates \
+curl -X POST http://localhost:8080/api/v1/candidatos \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Ana",
-    "lastName": "González",
-    "email": "ana.gonzalez@example.com",
-    "phone": "+56912345678",
-    "documentType": "RUT",
-    "documentNumber": "12.345.678-9",
-    "gender": "F",
-    "placeOfBirth": "Valparaíso, Chile",
-    "dateOfBirth": "1985-03-15",
-    "address": "Avenida Brasil 456",
-    "postalCode": "2340000",
-    "country": "Chile",
-    "localization": "Valparaíso, Chile",
-    "availableStartDate": "2025-02-01",
-    "availableEndDate": "2025-11-30"
-  }'
+        "nombre": "Ana",
+        "apellidos": "González",
+        "email": "ana.gonzalez@example.com",
+        "telefono": "+56912345678",
+        "tipoDocumento": "RUT",
+        "numeroDocumento": "12.345.678-9",
+        "genero": "F",
+        "lugarNacimiento": "Valparaíso, Chile",
+        "fechaNacimiento": "1985-03-15",
+        "direccion": "Avenida Brasil 456",
+        "codigoPostal": "2340000",
+        "pais": "Chile",
+        "localizacion": "Valparaíso, Chile",
+        "disponibilidadDesde": "2025-02-01",
+        "disponibilidadHasta": "2025-11-30"
+    }'
 ```
 
 **Response:**
 ```json
 {
-    "id": 5,
-    "name": "Ana",
-    "lastName": "González",
-    "email": "ana.gonzalez@example.com",
-    "phone": "+56912345678",
-    "documentType": "RUT",
-    "documentNumber": "12.345.678-9",
-    "gender": "F",
-    "placeOfBirth": "Valparaíso, Chile",
-    "dateOfBirth": "1985-03-15",
-    "address": "Avenida Brasil 456",
-    "postalCode": "2340000",
-    "country": "Chile",
-    "localization": "Valparaíso, Chile",
-    "availableStartDate": "2025-02-01",
-    "availableEndDate": "2025-11-30"
+    "id": 1,
+    "nombre": "Juan",
+    "apellidos": "Perez",
+    "email": "juan.perez@email.com",
+    "telefono": "123456789",
+    "tipoDocumento": "DNI",
+    "numeroDocumento": "12345678",
+    "genero": "M",
+    "lugarNacimiento": "Buenos Aires",
+    "fechaNacimiento": "1990-01-01",
+    "direccion": "Calle Falsa 123",
+    "codigoPostal": "1000",
+    "pais": "Argentina",
+    "localizacion": "Buenos Aires",
+    "disponibilidadDesde": "2025-01-01",
+    "disponibilidadHasta": "2025-12-31"
 }
 ```
 
@@ -212,35 +212,35 @@ curl -X POST http://localhost:8080/api/v1/candidates \
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates
+curl -X GET http://localhost:8080/api/v1/candidatos
 ```
 
 ### 3. Obtener candidato por ID
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates/1
+curl -X GET http://localhost:8080/api/v1/candidatos/1
 ```
 
 ### 4. Obtener anexos de un candidato
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates/1/annexes
+curl -X GET http://localhost:8080/api/v1/candidatos/1/documentos
 ```
 
 **Response:**
 ```json
 [
     {
-        "candidateId": 1,
+        "candidato": 1,
         "extension": "pdf",
-        "fileName": "cv_juan_perez.pdf"
+        "nombreArchivo": "cv_juan_perez.pdf"
     },
     {
-        "candidateId": 1,
+        "candidato": 1,
         "extension": "jpg",
-        "fileName": "photo_juan_perez.jpg"
+        "nombreArchivo": "photo_juan_perez.jpg"
     }
 ]
 ```
@@ -249,7 +249,7 @@ curl -X GET http://localhost:8080/api/v1/candidates/1/annexes
 
 **Request:**
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/candidates/1
+curl -X DELETE http://localhost:8080/api/v1/candidatos/1
 ```
 
 ## Validaciones
@@ -270,7 +270,7 @@ La API incluye validaciones automáticas para todos los campos:
     "timestamp": "2025-01-15",
     "code": 404,
     "message": "No candidate with the given ID 999",
-    "path": "/api/v1/candidates/999"
+    "path": "/api/v1/candidatos/999"
 }
 ```
 
@@ -280,10 +280,10 @@ La API incluye validaciones automáticas para todos los campos:
     "timestamp": "2025-01-15",
     "code": 400,
     "message": "Validation failed",
-    "path": "/api/v1/candidates",
+    "path": "/api/v1/candidatos",
     "validationErrors": {
-        "name": "Name is required",
-        "email": "Email must be valid"
+        "nombre": "El nombre es obligatorio",
+        "email": "El correo electrónico debe ser válido"
     }
 }
 ```
@@ -293,8 +293,8 @@ La API incluye validaciones automáticas para todos los campos:
 {
     "timestamp": "2025-09-26",
     "code": 409,
-    "message": "Email already exists",
-    "path": "/api/v1/candidates"
+    "message": "Email existente",
+    "path": "/api/v1/candidatos"
 }
 ```
 
@@ -440,28 +440,28 @@ Or comment out the lines:
 
 #### Create a candidate
 ```http
-POST /api/v1/candidates
+POST /api/v1/candidatos
 Content-Type: application/json
 ```
 
 #### Get all candidates
 ```http
-GET /api/v1/candidates
+GET /api/v1/candidatos
 ```
 
 #### Get candidate by ID
 ```http
-GET /api/v1/candidates/{id}
+GET /api/v1/candidatos/{id}
 ```
 
 #### Delete candidate by ID
 ```http
-DELETE /api/v1/candidates/{id}
+DELETE /api/v1/candidatos/{id}
 ```
 
 #### Get candidate's annexes
 ```http
-GET /api/v1/candidates/{id}/annexes
+GET /api/v1/candidatos/{id}/documentos
 ```
 
 ### Annex Management (Secondary Entity)
@@ -474,46 +474,46 @@ Annexes are managed through the candidate endpoints, maintaining the relationshi
 
 **Request:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/candidates \
+curl -X POST http://localhost:8080/api/v1/candidatos \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Anna",
-    "lastName": "Smith",
-    "email": "anna.smith@example.com",
-    "phone": "+56912345678",
-    "documentType": "RUT",
-    "documentNumber": "12.345.678-9",
-    "gender": "F",
-    "placeOfBirth": "Valparaíso, Chile",
-    "dateOfBirth": "1985-03-15",
-    "address": "Brasil Avenue 456",
-    "postalCode": "2340000",
-    "country": "Chile",
-    "localization": "Valparaíso, Chile",
-    "availableStartDate": "2025-02-01",
-    "availableEndDate": "2025-11-30"
-  }'
+        "nombre": "Ana",
+        "apellidos": "González",
+        "email": "ana.gonzalez@example.com",
+        "telefono": "+56912345678",
+        "tipoDocumento": "RUT",
+        "numeroDocumento": "12.345.678-9",
+        "genero": "F",
+        "lugarNacimiento": "Valparaíso, Chile",
+        "fechaNacimiento": "1985-03-15",
+        "direccion": "Avenida Brasil 456",
+        "codigoPostal": "2340000",
+        "pais": "Chile",
+        "localizacion": "Valparaíso, Chile",
+        "disponibilidadDesde": "2025-02-01",
+        "disponibilidadHasta": "2025-11-30"
+    }'
 ```
 
 **Response:**
 ```json
 {
-    "id": 5,
-    "name": "Anna",
-    "lastName": "Smith",
-    "email": "anna.smith@example.com",
-    "phone": "+56912345678",
-    "documentType": "RUT",
-    "documentNumber": "12.345.678-9",
-    "gender": "F",
-    "placeOfBirth": "Valparaíso, Chile",
-    "dateOfBirth": "1985-03-15",
-    "address": "Brasil Avenue 456",
-    "postalCode": "2340000",
-    "country": "Chile",
-    "localization": "Valparaíso, Chile",
-    "availableStartDate": "2025-02-01",
-    "availableEndDate": "2025-11-30"
+    "id": 1,
+    "nombre": "Juan",
+    "apellidos": "Perez",
+    "email": "juan.perez@email.com",
+    "telefono": "123456789",
+    "tipoDocumento": "DNI",
+    "numeroDocumento": "12345678",
+    "genero": "M",
+    "lugarNacimiento": "Buenos Aires",
+    "fechaNacimiento": "1990-01-01",
+    "direccion": "Calle Falsa 123",
+    "codigoPostal": "1000",
+    "pais": "Argentina",
+    "localizacion": "Buenos Aires",
+    "disponibilidadDesde": "2025-01-01",
+    "disponibilidadHasta": "2025-12-31"
 }
 ```
 
@@ -521,35 +521,35 @@ curl -X POST http://localhost:8080/api/v1/candidates \
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates
+curl -X GET http://localhost:8080/api/v1/candidatos
 ```
 
 ### 3. Get candidate by ID
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates/1
+curl -X GET http://localhost:8080/api/v1/candidatos/1
 ```
 
 ### 4. Get candidate's annexes
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8080/api/v1/candidates/1/annexes
+curl -X GET http://localhost:8080/api/v1/candidatos/1/documentos
 ```
 
 **Response:**
 ```json
 [
     {
-        "candidateId": 1,
+        "candidatoId": 3,
         "extension": "pdf",
-        "fileName": "cv_juan_perez.pdf"
+        "nombreArchivo": "cv_carlos_garcia.pdf"
     },
     {
-        "candidateId": 1,
-        "extension": "jpg",
-        "fileName": "photo_juan_perez.jpg"
+        "candidatoId": 3,
+        "extension": "png",
+        "nombreArchivo": "photo_carlos_garcia.png"
     }
 ]
 ```
@@ -558,7 +558,7 @@ curl -X GET http://localhost:8080/api/v1/candidates/1/annexes
 
 **Request:**
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/candidates/1
+curl -X DELETE http://localhost:8080/api/v1/candidatos/1
 ```
 
 ## Validations
@@ -578,8 +578,8 @@ The API includes automatic validations for all fields:
 {
     "timestamp": "2025-01-15",
     "code": 404,
-    "message": "No candidate with the given ID 999",
-    "path": "/api/v1/candidates/999"
+    "message": "No se encontró un candidato con el ID dado 999",
+    "path": "/api/v1/candidatos/999"
 }
 ```
 
@@ -589,9 +589,9 @@ The API includes automatic validations for all fields:
     "timestamp": "2025-01-15",
     "code": 400,
     "message": "Validation failed",
-    "path": "/api/v1/candidates",
+    "path": "/api/v1/candidatos",
     "validationErrors": {
-        "name": "Name is required",
+        "name": "El nombre es obligatorio",
         "email": "Email must be valid"
     }
 }
@@ -602,8 +602,8 @@ The API includes automatic validations for all fields:
 {
     "timestamp": "2025-09-26",
     "code": 409,
-    "message": "Email already exists",
-    "path": "/api/v1/candidates"
+    "message": "Email existente",
+    "path": "/api/v1/candidatos"
 }
 ```
 

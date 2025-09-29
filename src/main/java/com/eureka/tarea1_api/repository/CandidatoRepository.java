@@ -1,9 +1,9 @@
 package com.eureka.tarea1_api.repository;
 
-import com.eureka.tarea1_api.model.Candidate;
+import com.eureka.tarea1_api.model.Candidato;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
+public interface CandidatoRepository extends JpaRepository<Candidato, Integer> {
     boolean existsByEmail(String email);
 }

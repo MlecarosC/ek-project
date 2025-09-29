@@ -14,19 +14,19 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "annexes")
+@Table(name = "adjuntos")
 @Getter
 @Setter
-public class Annex {
+public class Adjunto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 5, nullable = false)
     private String extension;
     @Column(length = 255, nullable = false)
-    private String fileName;
+    private String nombreArchivo;
 
     @ManyToOne
     @JsonIgnore
-    private Candidate candidate;
+    private Candidato candidato;
 }

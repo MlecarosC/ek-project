@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
-import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
+import com.eureka.tarea1_api.dto.ResponseDocumentDTO;
 import com.eureka.tarea1_api.exception.NotFoundException;
 import com.eureka.tarea1_api.service.CandidateService;
 
@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("/api/v1/candidates")
+@RequestMapping("/api/v1/candidatos")
 public class CandidateController {
     private final CandidateService candidateService;
 
@@ -38,7 +38,7 @@ public class CandidateController {
     public ResponseEntity<List<CandidateDTO>> findAll() {
         List<CandidateDTO> candidatesDTO = candidateService.findAll();
         if (candidatesDTO.isEmpty()) {
-            throw new NotFoundException("No candidates found");
+            throw new NotFoundException("No se encontraron candidatos");
         }
         return ResponseEntity.ok(candidatesDTO);
     }
@@ -48,7 +48,7 @@ public class CandidateController {
         return candidateService.findById(id).map(
             ResponseEntity::ok
         ).orElseThrow(
-            () -> new NotFoundException("No candidate with the given ID " + id)
+            () -> new NotFoundException("No se encontró un candidato con el ID dado " + id)
         );
     }
 
@@ -58,12 +58,12 @@ public class CandidateController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/annexes")
-    public ResponseEntity<List<ResponseAnnexDTO>> getAnnexesByCandidateId(@PathVariable Integer id) {
-        List<ResponseAnnexDTO> annexesDTO = candidateService.getAnnexesByCandidateId(id);
-        if (annexesDTO.isEmpty()) {
-            throw new NotFoundException("No annexes found with the given candidate ID " + id);
+    @GetMapping("/{id}/documentos")
+    public ResponseEntity<List<ResponseDocumentDTO>> getDocumentosByCandidatoId(@PathVariable Integer id) {
+        List<ResponseDocumentDTO> documentosDTO = candidateService.getDocumentosByCandidatoId(id);
+        if (documentosDTO.isEmpty()) {
+            throw new NotFoundException("No se encontraron documentos con el ID de candidato dado " + id);
         }
-        return ResponseEntity.ok(annexesDTO);
+        return ResponseEntity.ok(documentosDTO);
     }
 }

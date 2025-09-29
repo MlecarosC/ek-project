@@ -12,62 +12,63 @@ import lombok.Data;
 public class CandidateDTO {
     private Integer id;
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 50, message = "Name must be at most 50 characters")
-    private String name;
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 50, message = "El nombre debe tener como máximo 50 caracteres")
+    private String nombre;
 
-    @NotBlank(message = "Last name is required")
-    @Size(max = 50, message = "Last name must be at most 50 characters")
-    private String lastName;
+    @NotBlank(message = "El apellido es obligatorio")
+    @Size(max = 50, message = "El apellido debe tener como máximo 50 caracteres")
+    private String apellidos;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
-    @Size(max = 150, message = "Email must be at most 150 characters")
+    @NotBlank(message = "El correo electrónico es obligatorio")
+    @Email(message = "El correo electrónico debe ser válido")
+    @Size(max = 150, message = "El correo electrónico debe tener como máximo 150 caracteres")
     private String email;
 
-    @NotBlank(message = "Phone is required")
-    @Size(max = 20, message = "Phone must be at most 20 characters")
-    private String phone;
+    @NotBlank(message = "El teléfono es obligatorio")
+    @Size(max = 20, message = "El teléfono debe tener como máximo 20 caracteres")
+    private String telefono;
 
-    @NotBlank(message = "Document type is required")
-    @Size(max = 15, message = "Document type must be at most 15 characters")
-    private String documentType;
+    @NotBlank(message = "El tipo de documento es obligatorio")
+    @Size(max = 15, message = "El tipo de documento debe tener como máximo 15 caracteres")
+    private String tipoDocumento;
 
-    @NotBlank(message = "Document number is required")
-    @Size(max = 30, message = "Document number must be at most 30 characters")
-    private String documentNumber;
+    @NotBlank(message = "El número de documento es obligatorio")
+    @Size(max = 30, message = "El número de documento debe tener como máximo 30 caracteres")
+    private String numeroDocumento;
 
-    @NotBlank(message = "Gender is required")
-    @Size(max = 20, message = "Gender must be at most 20 characters")
-    private String gender;
+    @NotBlank(message = "El género es obligatorio")
+    @Size(max = 20, message = "El género debe tener como máximo 20 caracteres")
+    private String genero;
 
-    @NotBlank(message = "Place of birth is required")
-    @Size(max = 200, message = "Place of birth must be at most 200 characters")
-    private String placeOfBirth;
+    @NotBlank(message = "El lugar de nacimiento es obligatorio")
+    @Size(max = 200, message = "El lugar de nacimiento debe tener como máximo 200 caracteres")
+    private String lugarNacimiento;
 
-    @NotNull(message = "Date of birth is required")
-    @PastOrPresent(message = "Date of birth cannot be in the future")
-    private LocalDate dateOfBirth;
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser en el futuro")
+    private LocalDate fechaNacimiento;
 
-    @NotBlank(message = "Address is required")
-    @Size(max = 200, message = "Address must be at most 200 characters")
-    private String address;
+    @NotBlank(message = "La dirección es obligatoria")
+    @Size(max = 200, message = "La dirección debe tener como máximo 200 caracteres")
+    private String direccion;
 
-    @NotBlank(message = "Postal code is required")
-    @Size(max = 20, message = "Postal code must be at most 20 characters")
-    private String postalCode;
+    @NotBlank(message = "El código postal es obligatorio")
+    @Size(max = 20, message = "El código postal debe tener como máximo 20 caracteres")
+    private String codigoPostal;
 
-    @NotBlank(message = "Country is required")
-    @Size(max = 50, message = "Country must be at most 50 characters")
-    private String country;
+    @NotBlank(message = "El país es obligatorio")
+    @Size(max = 50, message = "El país debe tener como máximo 50 caracteres")
+    private String pais;
 
-    @NotBlank(message = "Localization is required")
-    @Size(max = 150, message = "Localization must be at most 150 characters")
-    private String localization;
+    @NotBlank(message = "La localización es obligatoria")
+    @Size(max = 150, message = "La localización debe tener como máximo 150 caracteres")
+    private String localizacion;
 
-    @NotNull(message = "Available start date is required")
-    private LocalDate availableStartDate;
+    @NotNull(message = "La fecha de inicio de disponibilidad es obligatoria")
+    private LocalDate disponibilidadDesde;
 
-    @NotNull(message = "Available end date is required")
-    private LocalDate availableEndDate;
+    @NotNull(message = "La fecha de fin de disponibilidad es obligatoria")
+    private LocalDate disponibilidadHasta;
+
 }

@@ -16,44 +16,44 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "candidates")
+@Table(name = "candidatos")
 @Getter
 @Setter
-public class Candidate {
+public class Candidato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 50, nullable = false)
-    private String name;
+    private String nombre;
     @Column(length = 50, nullable = false)
-    private String lastName;
+    private String apellidos;
     @Column(unique = true, length = 150, nullable = false)
     private String email;
     @Column(length = 20, nullable = false)
-    private String phone;
+    private String telefono;
     @Column(length = 15, nullable = false)
-    private String documentType;
+    private String tipoDocumento;
     @Column(length = 30, nullable = false)
-    private String documentNumber;
+    private String numeroDocumento;
     @Column(length = 20, nullable = false)
-    private String gender;
+    private String genero;
     @Column(length = 200, nullable = false)
-    private String placeOfBirth;
+    private String lugarNacimiento;
     @Column(nullable = false)
-    private LocalDate dateOfBirth;
+    private LocalDate fechaNacimiento;
     @Column(length = 200, nullable = false)
-    private String address;
+    private String direccion;
     @Column(length = 20, nullable = false)
-    private String postalCode;
+    private String codigoPostal;
     @Column(length = 50, nullable = false)
-    private String country;
+    private String pais;
     @Column(length = 150, nullable = false)
-    private String localization;
+    private String localizacion;
     @Column(nullable = false)
-    private LocalDate availableStartDate;
+    private LocalDate disponibilidadDesde;
     @Column(nullable = false)
-    private LocalDate availableEndDate;
+    private LocalDate disponibilidadHasta;
     
-    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Annex> annexes;
+    @OneToMany(mappedBy = "candidato", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Adjunto> adjuntos;
 }

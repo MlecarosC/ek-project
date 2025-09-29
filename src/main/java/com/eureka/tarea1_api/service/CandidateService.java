@@ -1,12 +1,12 @@
 package com.eureka.tarea1_api.service;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
-import com.eureka.tarea1_api.dto.ResponseAnnexDTO;
+import com.eureka.tarea1_api.dto.ResponseDocumentDTO;
 import com.eureka.tarea1_api.exception.NotFoundException;
 import com.eureka.tarea1_api.exception.UniqueEmailException;
-import com.eureka.tarea1_api.model.Candidate;
-import com.eureka.tarea1_api.repository.AnnexRepository;
-import com.eureka.tarea1_api.repository.CandidateRepository;
+import com.eureka.tarea1_api.model.Candidato;
+import com.eureka.tarea1_api.repository.AdjuntoRepository;
+import com.eureka.tarea1_api.repository.CandidatoRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,26 +18,26 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CandidateService {
-    private final AnnexRepository annexRepository;
-    private final CandidateRepository candidateRepository;
+    private final AdjuntoRepository adjuntoRepository;
+    private final CandidatoRepository candidatoRepository;
     private final ModelMapper modelMapper;
 
-    public CandidateService(AnnexRepository annexRepository, CandidateRepository candidateRepository, ModelMapper modelMapper) {
-        this.annexRepository = annexRepository;
-        this.candidateRepository = candidateRepository;
+    public CandidateService(AdjuntoRepository annexRepository, CandidatoRepository candidateRepository, ModelMapper modelMapper) {
+        this.adjuntoRepository = annexRepository;
+        this.candidatoRepository = candidateRepository;
         this.modelMapper = modelMapper;
     }
 
     public CandidateDTO save(CandidateDTO candidateDTO) {
-        if (candidateRepository.existsByEmail(candidateDTO.getEmail())) {
-            throw new UniqueEmailException("Email already exists");
+        if (candidatoRepository.existsByEmail(candidateDTO.getEmail())) {
+            throw new UniqueEmailException("Email existente");
         }
-        Candidate candidate = modelMapper.map(candidateDTO, Candidate.class);
-        return modelMapper.map(candidateRepository.save(candidate), CandidateDTO.class);
+        Candidato candidate = modelMapper.map(candidateDTO, Candidato.class);
+        return modelMapper.map(candidatoRepository.save(candidate), CandidateDTO.class);
     }
 
     public List<CandidateDTO> findAll() {
-        return candidateRepository.findAll().stream().map(
+        return candidatoRepository.findAll().stream().map(
             candidate -> {
                 return modelMapper.map(candidate, CandidateDTO.class);
             }
@@ -45,7 +45,7 @@ public class CandidateService {
     }
 
     public Optional<CandidateDTO> findById(Integer id) {
-        return candidateRepository.findById(id).map(
+        return candidatoRepository.findById(id).map(
             candidate -> {
                 return modelMapper.map(candidate, CandidateDTO.class);
             }
@@ -53,17 +53,17 @@ public class CandidateService {
     }
 
     public void deleteById(Integer id) {
-        Candidate candidate = candidateRepository.findById(id).orElseThrow(
-            () -> new NotFoundException("No candidate with the given ID " + id)
+        Candidato candidate = candidatoRepository.findById(id).orElseThrow(
+            () -> new NotFoundException("No existe un candidato con el ID " + id)
         );
 
-        candidateRepository.delete(candidate);
+        candidatoRepository.delete(candidate);
     }
 
-    public List<ResponseAnnexDTO> getAnnexesByCandidateId(Integer id) {
-        return annexRepository.findByCandidateId(id).stream().map(
+    public List<ResponseDocumentDTO> getDocumentosByCandidatoId(Integer id) {
+        return adjuntoRepository.findByCandidatoId(id).stream().map(
             annex -> {
-                return modelMapper.map(annex, ResponseAnnexDTO.class);
+                return modelMapper.map(annex, ResponseDocumentDTO.class);
             }
         ).collect(Collectors.toList());
     }
