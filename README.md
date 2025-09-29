@@ -1,17 +1,14 @@
 # Eureka Tarea 1 - API REST
 
-<details>
-<summary><strong>🇪🇸 Español</strong></summary>
-
-API REST desarrollada con Spring Boot 3.5.6 para la gestión de candidatos y sus anexos correspondientes al Programa Eureka 2025 - Semana 1.
+API REST desarrollada con Spring Boot 3.5.6 para la gestión de candidatos y sus documentos correspondientes al Programa Eureka 2025 - Semana 1.
 
 ## Descripción
 
 Este proyecto implementa una API REST que maneja dos entidades principales:
-- **Candidate** (Entidad Principal): Gestiona la información de candidatos
-- **Annex** (Entidad Secundaria): Gestiona los archivos/anexos asociados a cada candidato
+- **Candidato** (Entidad Principal): Gestiona la información de candidatos
+- **Documento** (Entidad Secundaria): Gestiona los archivos/documentos asociados a cada candidato
 
-La relación entre ambas entidades es de **uno a muchos** (un candidato puede tener múltiples anexos).
+La relación entre ambas entidades es de **uno a muchos** (un candidato puede tener múltiples documentos).
 
 ## Tecnologías Utilizadas
 
@@ -150,14 +147,14 @@ GET /api/v1/candidatos/{id}
 DELETE /api/v1/candidatos/{id}
 ```
 
-#### Obtener anexos de un candidato
+#### Obtener documentos de un candidato
 ```http
-GET /api/v1/candidatos/{id}/annexes
+GET /api/v1/candidatos/{id}/documentos
 ```
 
-### Gestión de Anexos (Entidad Secundaria)
+### Gestión de Documentos (Entidad Secundaria)
 
-Los anexos se gestionan a través del endpoint de candidatos, manteniendo la relación entre ambas entidades.
+Los docuemntos se gestionan a través del endpoint de candidatos, manteniendo la relación entre ambas entidades.
 
 ## Ejemplos de Uso
 
@@ -222,7 +219,7 @@ curl -X GET http://localhost:8080/api/v1/candidatos
 curl -X GET http://localhost:8080/api/v1/candidatos/1
 ```
 
-### 4. Obtener anexos de un candidato
+### 4. Obtener documentos de un candidato
 
 **Request:**
 ```bash
@@ -256,10 +253,10 @@ curl -X DELETE http://localhost:8080/api/v1/candidatos/1
 
 La API incluye validaciones automáticas para todos los campos:
 
-- **name**: Requerido, máximo 50 caracteres
+- **nomobre**: Requerido, máximo 50 caracteres
 - **email**: Requerido, formato de email válido, máximo 150 caracteres
-- **dateOfBirth**: No puede ser fecha futura
-- **availableStartDate/availableEndDate**: Requeridas
+- **fechaNacimiento**: No puede ser fecha futura
+- **disponibilidadDesde/disponibilidadHasta**: Requeridas
 - Y más validaciones según los requisitos del negocio
 
 ## Manejo de Errores
@@ -269,7 +266,7 @@ La API incluye validaciones automáticas para todos los campos:
 {
     "timestamp": "2025-01-15",
     "code": 404,
-    "message": "No candidate with the given ID 999",
+    "message": "No se encontró un candidato con el ID dado 999",
     "path": "/api/v1/candidatos/999"
 }
 ```
@@ -302,314 +299,3 @@ La API incluye validaciones automáticas para todos los campos:
 
 - **Desarrollador**: Martin Lecaros
 - **Programa**: Eureka 2025 - Desarrollador Full Stack
-
-</details>
-
----
-
-<details>
-<summary><strong>🇺🇸 English</strong></summary>
-
-# Eureka Task 1 - REST API
-
-REST API developed with Spring Boot 3.5.6 for managing candidates and their annexes for the Eureka 2025 Program - Week 1.
-
-## Description
-
-This project implements a REST API that handles two main entities:
-- **Candidate** (Primary Entity): Manages candidate information
-- **Annex** (Secondary Entity): Manages files/annexes associated with each candidate
-
-The relationship between both entities is **one-to-many** (one candidate can have multiple annexes).
-
-## Technologies Used
-
-- **Java 21**
-- **Spring Boot 3.5.6**
-- **Spring Data JPA**
-- **Spring Boot Validation**
-- **MySQL 8.x**
-- **Lombok**
-- **ModelMapper 3.2.4**
-- **Maven**
-
-## Project Structure
-
-```
-src/main/java/com/eureka/tarea1_api/
-├── configuration/          # Configurations (ModelMapper)
-├── controller/            # REST Controllers
-├── dto/                  # Data Transfer Objects
-├── exception/            # Exception handling
-├── model/               # JPA Entities
-├── repository/          # JPA Repositories
-├── service/            # Business logic
-└── Tarea1ApiApplication.java
-```
-
-## Prerequisites
-
-- **Java 17 or 21**
-- **Maven 3.6+**
-- **MySQL 8.0+**
-- **Git**
-
-## Installation and Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/MlecarosC/ek-tarea1.git
-cd ek-tarea1
-```
-
-### 2. Configure Database
-
-> **ℹ️ Note**: The project includes SQL scripts that automatically create the database if it doesn't exist, so manual database creation is not necessary.
-
-1. **Configure database credentials:**
-
-The project doesn't include the `application.properties` file for security reasons. Instead, it provides an example file that you should use as a template:
-
-```bash
-# Copy the example file and create your local configuration
-cp src/main/resources/application-example.properties src/main/resources/application.properties
-```
-
-2. **Edit the `application.properties` file with your credentials:**
-
-```properties
-spring.application.name=Tarea1-api
-
-# Database configuration - DB is created automatically
-spring.datasource.url=jdbc:mysql://localhost:3306/eureka-tarea1-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-spring.datasource.username=YOUR_DB_USERNAME
-spring.datasource.password=YOUR_DB_PASSWORD
-
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=true
-
-# SQL Scripts - Run automatically on startup
-spring.sql.init.mode=always
-spring.sql.init.schema-locations=classpath:schema.sql
-spring.sql.init.data-locations=classpath:data.sql
-```
-
-> **⚠️ Important**: Make sure you have MySQL running on your system and replace `YOUR_DB_USERNAME` and `YOUR_DB_PASSWORD` with your actual credentials.
-
-### 3. Compile the Project
-
-```bash
-./mvnw clean compile
-```
-
-### 4. Run the Application
-
-```bash
-./mvnw spring-boot:run
-```
-
-The application will run on `http://localhost:8080`
-
-## ⚠️ Important: Test Data Behavior
-
-The application includes **test data** that loads automatically every time you start the application:
-
-- 4 example candidates with their respective annexes
-- Data is inserted using `INSERT IGNORE`, so it won't duplicate
-
-**📝 Note about record deletion:**
-If you delete candidates during testing and restart the application, the deleted candidates will be recreated automatically, but with **higher IDs** (this is normal MySQL behavior with AUTO_INCREMENT).
-
-**🛠️ To prevent automatic test data loading:**
-
-Edit your `application.properties` file and change:
-```properties
-# Disable automatic data loading
-spring.sql.init.mode=never
-```
-
-Or comment out the lines:
-```properties
-# spring.sql.init.data-locations=classpath:data.sql
-```
-
-## API Endpoints
-
-### Candidate Management (Primary Entity)
-
-#### Create a candidate
-```http
-POST /api/v1/candidatos
-Content-Type: application/json
-```
-
-#### Get all candidates
-```http
-GET /api/v1/candidatos
-```
-
-#### Get candidate by ID
-```http
-GET /api/v1/candidatos/{id}
-```
-
-#### Delete candidate by ID
-```http
-DELETE /api/v1/candidatos/{id}
-```
-
-#### Get candidate's annexes
-```http
-GET /api/v1/candidatos/{id}/documentos
-```
-
-### Annex Management (Secondary Entity)
-
-Annexes are managed through the candidate endpoints, maintaining the relationship between both entities.
-
-## Usage Examples
-
-### 1. Create a new candidate
-
-**Request:**
-```bash
-curl -X POST http://localhost:8080/api/v1/candidatos \
-  -H "Content-Type: application/json" \
-  -d '{
-        "nombre": "Ana",
-        "apellidos": "González",
-        "email": "ana.gonzalez@example.com",
-        "telefono": "+56912345678",
-        "tipoDocumento": "RUT",
-        "numeroDocumento": "12.345.678-9",
-        "genero": "F",
-        "lugarNacimiento": "Valparaíso, Chile",
-        "fechaNacimiento": "1985-03-15",
-        "direccion": "Avenida Brasil 456",
-        "codigoPostal": "2340000",
-        "pais": "Chile",
-        "localizacion": "Valparaíso, Chile",
-        "disponibilidadDesde": "2025-02-01",
-        "disponibilidadHasta": "2025-11-30"
-    }'
-```
-
-**Response:**
-```json
-{
-    "id": 1,
-    "nombre": "Juan",
-    "apellidos": "Perez",
-    "email": "juan.perez@email.com",
-    "telefono": "123456789",
-    "tipoDocumento": "DNI",
-    "numeroDocumento": "12345678",
-    "genero": "M",
-    "lugarNacimiento": "Buenos Aires",
-    "fechaNacimiento": "1990-01-01",
-    "direccion": "Calle Falsa 123",
-    "codigoPostal": "1000",
-    "pais": "Argentina",
-    "localizacion": "Buenos Aires",
-    "disponibilidadDesde": "2025-01-01",
-    "disponibilidadHasta": "2025-12-31"
-}
-```
-
-### 2. Get all candidates
-
-**Request:**
-```bash
-curl -X GET http://localhost:8080/api/v1/candidatos
-```
-
-### 3. Get candidate by ID
-
-**Request:**
-```bash
-curl -X GET http://localhost:8080/api/v1/candidatos/1
-```
-
-### 4. Get candidate's annexes
-
-**Request:**
-```bash
-curl -X GET http://localhost:8080/api/v1/candidatos/1/documentos
-```
-
-**Response:**
-```json
-[
-    {
-        "candidatoId": 3,
-        "extension": "pdf",
-        "nombreArchivo": "cv_carlos_garcia.pdf"
-    },
-    {
-        "candidatoId": 3,
-        "extension": "png",
-        "nombreArchivo": "photo_carlos_garcia.png"
-    }
-]
-```
-
-### 5. Delete a candidate
-
-**Request:**
-```bash
-curl -X DELETE http://localhost:8080/api/v1/candidatos/1
-```
-
-## Validations
-
-The API includes automatic validations for all fields:
-
-- **name**: Required, maximum 50 characters
-- **email**: Required, valid email format, maximum 150 characters
-- **dateOfBirth**: Cannot be a future date
-- **availableStartDate/availableEndDate**: Required
-- And more validations according to business requirements
-
-## Error Handling
-
-### Error 404 - Not Found
-```json
-{
-    "timestamp": "2025-01-15",
-    "code": 404,
-    "message": "No se encontró un candidato con el ID dado 999",
-    "path": "/api/v1/candidatos/999"
-}
-```
-
-### Error 400 - Validation
-```json
-{
-    "timestamp": "2025-01-15",
-    "code": 400,
-    "message": "Validation failed",
-    "path": "/api/v1/candidatos",
-    "validationErrors": {
-        "name": "El nombre es obligatorio",
-        "email": "Email must be valid"
-    }
-}
-```
-
-### Error 409 - Duplicated Email
-```json
-{
-    "timestamp": "2025-09-26",
-    "code": 409,
-    "message": "Email existente",
-    "path": "/api/v1/candidatos"
-}
-```
-
-## Author
-
-- **Developer**: Martin Lecaros
-- **Program**: Eureka 2025 - Full Stack Developer
-
-</details>
