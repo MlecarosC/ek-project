@@ -1,0 +1,64 @@
+services:
+  # Servicio de Base de Datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: eureka-mysql
+    restart: always
+    environment:
+      # Variables de entorno para configurar MySQL
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: eureka-tarea1-db
+      MYSQL_USER: eureka_user
+      MYSQL_PASSWORD: eureka_pass
+    ports:
+      # Puerto del host:Puerto del contenedor
+      - "3307:3306"  # Usando 3307 para evitar conflicto si tienes MySQL local
+    volumes:
+      # Persistir datos de MySQL en tu máquina
+      - mysql_data:/var/lib/mysql
+      # Cargar scripts SQL automáticamente
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      - eureka-network
+    healthcheck:
+      # Verificar que MySQL esté listo
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Servicio de la API Spring Boot
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eureka-api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # Variables de entorno para Spring Boot
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-tarea1-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: eureka_user
+      SPRING_DATASOURCE_PASSWORD: eureka_pass
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      # Desactivar carga automática de scripts (ya los cargó MySQL)
+      SPRING_SQL_INIT_MODE: never
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - eureka-network
+
+# Volumen para persistir datos de MySQL
+volumes:
+  mysql_data:
+
+# Red para que los contenedores se comuniquen
+networks:
+  eureka-network:
+    driver: bridge

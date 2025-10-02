@@ -20,6 +20,7 @@ La relación entre ambas entidades es de **uno a muchos** (un candidato puede te
 - **Lombok**
 - **ModelMapper 3.2.4**
 - **Maven**
+- **Docker & Docker Compose**
 
 ## Estructura del Proyecto
 
@@ -37,9 +38,7 @@ src/main/java/com/eureka/tarea1_api/
 
 ## Requisitos Previos
 
-- **Java 17 o 21**
-- **Maven 3.6+**
-- **MySQL 8.0+**
+- **Docker Desktop**
 - **Git**
 
 ## Instalación y Configuración
@@ -51,53 +50,60 @@ git clone https://github.com/MlecarosC/ek-tarea1.git
 cd ek-tarea1
 ```
 
-### 2. Configurar Base de Datos
+### 2. Levantar la Aplicación con Docker
 
-> **ℹ️ Nota**: El proyecto incluye scripts SQL que crean automáticamente la base de datos si no existe, por lo que no es necesario crearla manualmente.
+> **ℹ️ Nota**: Docker se encarga de crear automáticamente la base de datos, las tablas y cargar los datos de prueba. No necesitas configurar nada manualmente.
 
-1. **Configurar credenciales de base de datos:**
-
-El proyecto no incluye el archivo `application.properties` por razones de seguridad. En su lugar, proporciona un archivo de ejemplo que debes usar como plantilla:
+**Iniciar la aplicación:**
 
 ```bash
-# Copia el archivo de ejemplo y crea tu configuración local
-cp src/main/resources/application-example.properties src/main/resources/application.properties
-```
+# Primera vez (construir y ejecutar)
+docker-compose up --build
 
-2. **Editar el archivo `application.properties` con tus credenciales:**
+# Ejecuciones posteriores
+docker-compose up
 
-```properties
-spring.application.name=Tarea1-api
-
-# Configuración de base de datos - La DB se crea automáticamente
-spring.datasource.url=jdbc:mysql://localhost:3306/eureka-tarea1-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-spring.datasource.username=TU_USUARIO_DB
-spring.datasource.password=TU_CONTRASEÑA_DB
-
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=true
-
-# Scripts SQL - Se ejecutan automáticamente al iniciar
-spring.sql.init.mode=always
-spring.sql.init.schema-locations=classpath:schema.sql
-spring.sql.init.data-locations=classpath:data.sql
-```
-
-> **⚠️ Importante**: Asegúrate de tener MySQL funcionando en tu sistema y reemplaza `TU_USUARIO_DB` y `TU_CONTRASEÑA_DB` con tus credenciales reales.
-
-### 3. Compilar el Proyecto
-
-```bash
-./mvnw clean compile
-```
-
-### 4. Ejecutar la Aplicación
-
-```bash
-./mvnw spring-boot:run
+# Ejecutar en segundo plano
+docker-compose up -d
 ```
 
 La aplicación se ejecutará en `http://localhost:8080`
+
+### 3. Detener la Aplicación
+
+```bash
+# Detener contenedores
+docker-compose stop
+
+# Detener y eliminar contenedores
+docker-compose down
+
+# Detener y eliminar contenedores y datos de BD (reset completo)
+docker-compose down -v
+```
+
+### 4. Comandos Útiles
+
+```bash
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Ver logs solo de la API
+docker-compose logs -f api
+
+# Ver logs solo de MySQL
+docker-compose logs -f mysql
+
+# Ver estado de los contenedores
+docker-compose ps
+
+# Reconstruir después de cambios en el código
+docker-compose up --build -d
+
+# Acceder a la base de datos
+docker exec -it eureka-mysql mysql -u eureka_user -p
+# Contraseña: eureka_pass
+```
 
 ## ⚠️ Importante: Comportamiento de Datos de Prueba
 
@@ -111,15 +117,16 @@ Si eliminas candidatos durante las pruebas y reinicias la aplicación, los candi
 
 **🛠️ Para evitar la carga automática de datos de prueba:**
 
-Edita tu archivo `application.properties` y cambia:
-```properties
-# Desactivar carga automática de datos
-spring.sql.init.mode=never
+Edita el archivo `docker-compose.yml` en la sección de la API y cambia:
+```yaml
+environment:
+  SPRING_SQL_INIT_MODE: never  # Cambiar de 'always' a 'never'
 ```
 
-O comenta las líneas:
-```properties
-# spring.sql.init.data-locations=classpath:data.sql
+Luego reinicia los contenedores:
+```bash
+docker-compose down
+docker-compose up -d
 ```
 
 ## Endpoints de la API
@@ -154,7 +161,7 @@ GET /api/v1/candidatos/{id}/documentos
 
 ### Gestión de Documentos (Entidad Secundaria)
 
-Los docuemntos se gestionan a través del endpoint de candidatos, manteniendo la relación entre ambas entidades.
+Los documentos se gestionan a través del endpoint de candidatos, manteniendo la relación entre ambas entidades.
 
 ## Ejemplos de Uso
 
@@ -253,7 +260,7 @@ curl -X DELETE http://localhost:8080/api/v1/candidatos/1
 
 La API incluye validaciones automáticas para todos los campos:
 
-- **nomobre**: Requerido, máximo 50 caracteres
+- **nombre**: Requerido, máximo 50 caracteres
 - **email**: Requerido, formato de email válido, máximo 150 caracteres
 - **fechaNacimiento**: No puede ser fecha futura
 - **disponibilidadDesde/disponibilidadHasta**: Requeridas
@@ -293,6 +300,59 @@ La API incluye validaciones automáticas para todos los campos:
     "message": "Email existente",
     "path": "/api/v1/candidatos"
 }
+```
+
+## Solución de Problemas
+
+### Puerto 8080 ya en uso
+
+**Windows:**
+```bash
+netstat -ano | findstr :8080
+```
+
+**Mac/Linux:**
+```bash
+lsof -i :8080
+```
+
+**Solución:** Cambia el puerto en `docker-compose.yml`:
+```yaml
+ports:
+  - "8081:8080"  # Usar puerto 8081 en lugar de 8080
+```
+
+### MySQL no inicia correctamente
+
+```bash
+# Ver logs detallados
+docker-compose logs mysql
+
+# Eliminar volumen y reintentar
+docker-compose down -v
+docker-compose up --build
+```
+
+### La API no se conecta a MySQL
+
+```bash
+# Verificar que MySQL esté saludable
+docker-compose ps
+
+# Ver logs de la API
+docker-compose logs api
+
+# Verificar conectividad desde la API a MySQL
+docker exec -it eureka-api ping mysql
+```
+
+### Cambios en el código no se reflejan
+
+```bash
+# Reconstruir la imagen sin caché
+docker-compose down
+docker-compose build --no-cache api
+docker-compose up
 ```
 
 ## Autor
