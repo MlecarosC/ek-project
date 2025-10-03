@@ -6,8 +6,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.time.LocalDate;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +20,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.eureka.tarea1_api.dto.CandidateDTO;
+import com.eureka.tarea1_api.fixtures.CandidateFixture;
 import com.eureka.tarea1_api.model.Candidato;
 import com.eureka.tarea1_api.repository.CandidatoRepository;
 
@@ -43,6 +42,9 @@ public class CandidatoContorllerTest {
 
     @Autowired
     private CandidatoRepository candidatoRepository;
+
+    @Autowired
+    private CandidateFixture candidateFixture;
 
     private static final String BASE_PATH = "/api/v1/candidatos";
 
@@ -69,7 +71,7 @@ public class CandidatoContorllerTest {
      */
     @Test
     void testCreateCandidate_Success() {
-        CandidateDTO candidateDTO = createValidCandidateDTO();
+        CandidateDTO candidateDTO = candidateFixture.createValidCandidateDTO();
 
         // Usamos RestAssured para enviar la solicitud POST
         given()
@@ -106,7 +108,7 @@ public class CandidatoContorllerTest {
     @DisplayName("POST /api/v1/candidatos - Email duplicado retorna 409 CONFLICT")
     void testCreateCandidate_DuplicatedEmail() {
         // Arrange: Crear candidato inicial
-        CandidateDTO candidateDTO = createValidCandidateDTO();
+        CandidateDTO candidateDTO = candidateFixture.createValidCandidateDTO();
         Candidato existingCandidate = new Candidato();
         existingCandidate.setNombre(candidateDTO.getNombre());
         existingCandidate.setApellidos(candidateDTO.getApellidos());
@@ -126,7 +128,7 @@ public class CandidatoContorllerTest {
         candidatoRepository.save(existingCandidate);
 
         // Act & Assert: Intentar crear otro candidato con el mismo email
-        CandidateDTO duplicateDTO = createValidCandidateDTO();
+        CandidateDTO duplicateDTO = candidateFixture.createValidCandidateDTO();
         duplicateDTO.setNombre("Otro Nombre");
         
         given()
@@ -174,8 +176,8 @@ public class CandidatoContorllerTest {
     @DisplayName("GET /api/v1/candidatos - Obtener todos los candidatos")
     void testGetAllCandidates_Success() {
         // Arrange: Crear 2 candidatos
-        createAndSaveCandidate("juan@test.com");
-        createAndSaveCandidate("maria@test.com");
+        candidateFixture.createAndSaveCandidate("juan@test.com");
+        candidateFixture.createAndSaveCandidate("maria@test.com");
 
         // Act & Assert
         given()
@@ -211,7 +213,7 @@ public class CandidatoContorllerTest {
     @DisplayName("GET /api/v1/candidatos/{id} - Obtener candidato por ID")
     void testGetCandidateById_Success() {
         // Arrange
-        Candidato savedCandidate = createAndSaveCandidate("test@email.com");
+        Candidato savedCandidate = candidateFixture.createAndSaveCandidate("test@email.com");
 
         // Act & Assert
         given()
@@ -247,7 +249,7 @@ public class CandidatoContorllerTest {
     @DisplayName("DELETE /api/v1/candidatos/{id} - Eliminar candidato")
     void testDeleteCandidate_Success() {
         // Arrange
-        Candidato savedCandidate = createAndSaveCandidate("delete@test.com");
+        Candidato savedCandidate = candidateFixture.createAndSaveCandidate("delete@test.com");
         assertThat(candidatoRepository.count()).isEqualTo(1);
 
         // Act & Assert
@@ -275,55 +277,5 @@ public class CandidatoContorllerTest {
         .then()
             .statusCode(404)
             .body("message", containsString("No existe un candidato con el ID 999"));
-    }
-
-
-
-    // ==================== HELPER METHODS ====================
-
-    /**
-     * Crea un DTO de candidato válido para pruebas
-     */
-    private CandidateDTO createValidCandidateDTO() {
-        CandidateDTO dto = new CandidateDTO();
-        dto.setNombre("Juan");
-        dto.setApellidos("Pérez");
-        dto.setEmail("juan.perez@test.com");
-        dto.setTelefono("+56912345678");
-        dto.setTipoDocumento("RUT");
-        dto.setNumeroDocumento("12.345.678-9");
-        dto.setGenero("M");
-        dto.setLugarNacimiento("Santiago, Chile");
-        dto.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        dto.setDireccion("Calle Falsa 123");
-        dto.setCodigoPostal("8320000");
-        dto.setPais("Chile");
-        dto.setLocalizacion("Santiago, Chile");
-        dto.setDisponibilidadDesde(LocalDate.of(2025, 1, 1));
-        dto.setDisponibilidadHasta(LocalDate.of(2025, 12, 31));
-        return dto;
-    }
-
-    /**
-     * Crea y guarda un candidato en la base de datos
-     */
-    private Candidato createAndSaveCandidate(String email) {
-        Candidato candidato = new Candidato();
-        candidato.setNombre("Test");
-        candidato.setApellidos("User");
-        candidato.setEmail(email);
-        candidato.setTelefono("+56912345678");
-        candidato.setTipoDocumento("RUT");
-        candidato.setNumeroDocumento("12.345.678-9");
-        candidato.setGenero("M");
-        candidato.setLugarNacimiento("Santiago");
-        candidato.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        candidato.setDireccion("Calle Test 123");
-        candidato.setCodigoPostal("8320000");
-        candidato.setPais("Chile");
-        candidato.setLocalizacion("Santiago");
-        candidato.setDisponibilidadDesde(LocalDate.of(2025, 1, 1));
-        candidato.setDisponibilidadHasta(LocalDate.of(2025, 12, 31));
-        return candidatoRepository.save(candidato);
     }
 }

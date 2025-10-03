@@ -9,8 +9,6 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.oneOf;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.time.LocalDate;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +22,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.eureka.tarea1_api.fixtures.CandidateFixture;
 import com.eureka.tarea1_api.model.Adjunto;
 import com.eureka.tarea1_api.model.Candidato;
 import com.eureka.tarea1_api.repository.AdjuntoRepository;
@@ -45,6 +44,9 @@ public class AdjuntoTest {
 
     @Autowired
     private CandidatoRepository candidatoRepository;
+
+    @Autowired
+    private CandidateFixture candidateFixture;
 
     @Autowired
     private AdjuntoRepository adjuntoRepository;
@@ -78,7 +80,7 @@ public class AdjuntoTest {
     @DisplayName("GET /api/v1/candidatos/{id}/documentos - Obtener documentos de candidato")
     void testGetDocumentosByCandidatoId_Success() {
         // Arrange: Crear candidato con 2 documentos
-        Candidato candidato = createAndSaveCandidate("test@email.com");
+        Candidato candidato = candidateFixture.createAndSaveCandidate("test@email.com");
         
         Adjunto doc1 = new Adjunto();
         doc1.setExtension("pdf");
@@ -114,7 +116,7 @@ public class AdjuntoTest {
     @DisplayName("GET /api/v1/candidatos/{id}/documentos - Candidato sin documentos retorna 404")
     void testGetDocumentosByCandidatoId_EmptyList() {
         // Arrange: Crear candidato sin documentos
-        Candidato candidato = createAndSaveCandidate("nodocs@email.com");
+        Candidato candidato = candidateFixture.createAndSaveCandidate("nodocs@email.com");
 
         // Act & Assert
         given()
@@ -148,7 +150,7 @@ public class AdjuntoTest {
     @DisplayName("DELETE candidato elimina sus documentos en cascada")
     void testDeleteCandidate_CascadeDeleteDocuments() {
         // Arrange: Crear candidato con documentos
-        Candidato candidato = createAndSaveCandidate("cascade@email.com");
+        Candidato candidato = candidateFixture.createAndSaveCandidate("cascade@email.com");
         
         Adjunto doc1 = new Adjunto();
         doc1.setExtension("pdf");
@@ -186,14 +188,14 @@ public class AdjuntoTest {
     @DisplayName("Diferentes candidatos pueden tener documentos con nombres similares")
     void testMultipleCandidates_SimilarDocumentNames() {
         // Arrange: Crear 2 candidatos con documentos de nombres similares
-        Candidato candidato1 = createAndSaveCandidate("candidate1@email.com");
+        Candidato candidato1 = candidateFixture.createAndSaveCandidate("candidate1@email.com");
         Adjunto doc1 = new Adjunto();
         doc1.setExtension("pdf");
         doc1.setNombreArchivo("curriculum.pdf");
         doc1.setCandidato(candidato1);
         adjuntoRepository.save(doc1);
 
-        Candidato candidato2 = createAndSaveCandidate("candidate2@email.com");
+        Candidato candidato2 = candidateFixture.createAndSaveCandidate("candidate2@email.com");
         Adjunto doc2 = new Adjunto();
         doc2.setExtension("pdf");
         doc2.setNombreArchivo("curriculum.pdf"); // Mismo nombre
@@ -227,7 +229,7 @@ public class AdjuntoTest {
     @DisplayName("Documentos con diferentes extensiones se guardan correctamente")
     void testDocuments_DifferentExtensions() {
         // Arrange
-        Candidato candidato = createAndSaveCandidate("extensions@email.com");
+        Candidato candidato = candidateFixture.createAndSaveCandidate("extensions@email.com");
         
         String[] extensions = {"pdf", "docx", "jpg", "png", "txt"};
         for (String ext : extensions) {
@@ -247,27 +249,5 @@ public class AdjuntoTest {
             .statusCode(200)
             .body("size()", equalTo(5))
             .body("extension", hasItems("pdf", "docx", "jpg", "png", "txt"));
-    }
-
-    // ==================== HELPER METHODS ====================
-
-    private Candidato createAndSaveCandidate(String email) {
-        Candidato candidato = new Candidato();
-        candidato.setNombre("Test");
-        candidato.setApellidos("User");
-        candidato.setEmail(email);
-        candidato.setTelefono("+56912345678");
-        candidato.setTipoDocumento("RUT");
-        candidato.setNumeroDocumento("12.345.678-9");
-        candidato.setGenero("M");
-        candidato.setLugarNacimiento("Santiago");
-        candidato.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        candidato.setDireccion("Calle Test 123");
-        candidato.setCodigoPostal("8320000");
-        candidato.setPais("Chile");
-        candidato.setLocalizacion("Santiago");
-        candidato.setDisponibilidadDesde(LocalDate.of(2025, 1, 1));
-        candidato.setDisponibilidadHasta(LocalDate.of(2025, 12, 31));
-        return candidatoRepository.save(candidato);
     }
 }
