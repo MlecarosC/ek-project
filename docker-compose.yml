@@ -7,7 +7,7 @@ services:
     environment:
       # Variables de entorno para configurar MySQL
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: eureka-tarea1-db
+      MYSQL_DATABASE: eureka-project-db
       MYSQL_USER: eureka_user
       MYSQL_PASSWORD: eureka_pass
     ports:
@@ -17,8 +17,8 @@ services:
       # Persistir datos de MySQL en tu máquina
       - mysql_data:/var/lib/mysql
       # Cargar scripts SQL automáticamente
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./api-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./api-service/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     networks:
       - eureka-network
     healthcheck:
@@ -31,7 +31,7 @@ services:
   # Servicio de la API Spring Boot
   api:
     build:
-      context: .
+      context: ./api-service
       dockerfile: Dockerfile
     container_name: eureka-api
     restart: always
@@ -39,7 +39,7 @@ services:
       - "8080:8080"
     environment:
       # Variables de entorno para Spring Boot
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-tarea1-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: eureka_user
       SPRING_DATASOURCE_PASSWORD: eureka_pass
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
