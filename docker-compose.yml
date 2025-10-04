@@ -10,6 +10,12 @@ services:
       - "8761:8761"
     networks:
       - eureka-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
   # Servicio de Base de Datos MySQL
   mysql:
@@ -57,11 +63,14 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       EUREKA_INSTANCE_HOSTNAME: api
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+      # Reintentos de conexión a Eureka
+      EUREKA_CLIENT_REGISTRY_FETCH_INTERVAL_SECONDS: 5
+      EUREKA_CLIENT_INITIAL_INSTANCE_INFO_REPLICATION_INTERVAL_SECONDS: 5
     depends_on:
       mysql:
         condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
     networks:
       - eureka-network
 

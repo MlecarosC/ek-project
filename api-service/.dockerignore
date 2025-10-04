@@ -16,9 +16,6 @@ build/
 .gitignore
 .gitattributes
 
-# Archivos de configuración local
-src/main/resources/application.properties
-
 # Maven wrapper jar (ya está en la imagen base)
 .mvn/wrapper/maven-wrapper.jar
 
