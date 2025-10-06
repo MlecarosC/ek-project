@@ -31,8 +31,8 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./api-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      - ./api-service/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./candidatos-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./candidatos-service/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     networks:
       - eureka-network
     healthcheck:
@@ -42,15 +42,47 @@ services:
       retries: 10
       start_period: 40s
 
-  # Servicio de la API Spring Boot
-  api:
+  # Servicio de candidatos Spring Boot
+  api-candidatos:
     build:
-      context: ./api-service
+      context: ./candidatos-service
       dockerfile: Dockerfile
-    container_name: eureka-api
+    container_name: eureka-candidatos-service
     restart: always
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: eureka_user
+      SPRING_DATASOURCE_PASSWORD: eureka_pass
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING_SQL_INIT_MODE: never
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+      # Reintentos de conexión a Eureka
+      EUREKA_CLIENT_REGISTRY_FETCH_INTERVAL_SECONDS: 5
+      EUREKA_CLIENT_INITIAL_INSTANCE_INFO_REPLICATION_INTERVAL_SECONDS: 5
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-network
+
+  # Servicio de adjuntos Spring Boot
+  api-adjuntos:
+    build:
+      context: ./adjuntos-service
+      dockerfile: Dockerfile
+    container_name: eureka-adjuntos-service
+    restart: always
+    ports:
+      - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: eureka_user
