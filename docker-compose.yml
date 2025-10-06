@@ -105,7 +105,23 @@ services:
         condition: service_healthy
     networks:
       - eureka-network
-
+  api-gateway:
+    build:
+      context: ./gateway-server
+      dockerfile: Dockerfile
+    container_name: eureka-gateway
+    restart: always
+    ports:
+      - "8090:8090"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api-gateway
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-network
 volumes:
   mysql_data:
 

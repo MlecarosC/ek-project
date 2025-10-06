@@ -1,16 +1,14 @@
 spring:
   cloud:
     gateway:
-      routes:
-        - id: api-service-candidatos
-          uri: lb://api-service-candidatos
-          predicates:
-            - Path=/api/v1/candidatos/**
-          filters:
-            - StripPrefix=3
-        - id: api-service-documentos
-          uri: lb://api-service-documentos
-          predicates:
-            - Path=/api/v1/documentos/**
-          filters:
-            - StripPrefix=3
+      server:
+        webflux:
+            routes:
+              - id: candidato-service
+                uri: lb://candidato-service
+                predicates:
+                  - Path=/api/v1/candidatos/**
+              - id: adjunto-service
+                uri: lb://adjunto-service
+                predicates:
+                  - Path=/api/v1/adjuntos/**
