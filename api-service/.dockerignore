@@ -16,9 +16,6 @@ build/
 .gitignore
 .gitattributes
 
-# Maven wrapper jar (ya está en la imagen base)
-.mvn/wrapper/maven-wrapper.jar
-
 # Documentación
 README.md
 HELP.md

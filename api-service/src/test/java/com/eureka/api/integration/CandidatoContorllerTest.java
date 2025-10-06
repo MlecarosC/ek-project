@@ -6,65 +6,25 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.eureka.api.config.BaseConfig;
 import com.eureka.api.dto.CandidateDTO;
-import com.eureka.api.fixtures.CandidateFixture;
 import com.eureka.api.model.Candidato;
-import com.eureka.api.repository.CandidatoRepository;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-
 @Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class CandidatoContorllerTest {
+public class CandidatoContorllerTest extends BaseConfig {
 
     @Container
     @ServiceConnection
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
-
-    @LocalServerPort
-    private Integer port;
-
-    @Autowired
-    private CandidatoRepository candidatoRepository;
-
-    @Autowired
-    private CandidateFixture candidateFixture;
-
-    private static final String BASE_PATH = "/api/v1/candidatos";
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = port;
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-    }
-
-    @BeforeEach
-    void cleanDatabase() {
-        // Limpiar la base de datos antes de cada test
-        candidatoRepository.deleteAll();
-    }
-
-    @AfterEach
-    void tearDown() {
-        RestAssured.reset();
-    }
+    protected static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
 
     /**
      * Test: Crear un candidato exitosamente
