@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.eureka.api.dto.ResponseDocumentDTO;
+import com.eureka.api.dto.ResponseAdjuntoDTO;
 import com.eureka.api.repository.AdjuntoRepository;
 
 
@@ -20,18 +20,18 @@ public class AdjuntoService {
         this.modelMapper = modelMapper;
     }
 
-    public List<ResponseDocumentDTO> findAll() {
+    public List<ResponseAdjuntoDTO> findAll() {
         return adjuntoRepository.findAll().stream().map(
             annex -> {
-                return modelMapper.map(annex, ResponseDocumentDTO.class);
+                return modelMapper.map(annex, ResponseAdjuntoDTO.class);
             }
         ).collect(Collectors.toList());
     }
 
-    public List<ResponseDocumentDTO> getDocumentosByCandidatoId(Integer id) {
+    public List<ResponseAdjuntoDTO> getDocumentosByCandidatoId(Integer id) {
         return adjuntoRepository.findByCandidatoId(id).stream().map(
             annex -> {
-                return modelMapper.map(annex, ResponseDocumentDTO.class);
+                return modelMapper.map(annex, ResponseAdjuntoDTO.class);
             }
         ).collect(Collectors.toList());
     }

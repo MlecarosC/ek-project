@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-public class ResponseDocumentDTO {
+public class ResponseAdjuntoDTO {
     private Integer candidatoId;
     private String extension;
     private String nombreArchivo;
