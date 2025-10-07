@@ -152,7 +152,6 @@ docker-compose up -d
 # Ver estado de todos los contenedores
 docker-compose ps
 
-# Deberías ver todos los servicios como "Up" y "healthy"
 ```
 
 **Acceso a los servicios:**
@@ -182,7 +181,7 @@ docker-compose down -v
 Todos los servicios están disponibles a través del API Gateway en el puerto **8090**:
 
 #### Gestión de Candidatos
-```http
+```
 # Crear un candidato
 POST http://localhost:8090/api/v1/candidatos
 
@@ -197,7 +196,7 @@ DELETE http://localhost:8090/api/v1/candidatos/{id}
 ```
 
 #### Gestión de Documentos
-```http
+```
 # Obtener todos los adjuntos
 GET http://localhost:8090/api/v1/adjuntos
 
