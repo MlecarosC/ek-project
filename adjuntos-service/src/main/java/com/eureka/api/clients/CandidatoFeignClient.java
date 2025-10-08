@@ -13,7 +13,7 @@ import com.eureka.api.dto.CandidatoInfoDTO;
  * El nombre "candidato-service" debe coincidir con spring.application.name 
  * del servicio de candidatos registrado en Eureka.
  */
-@FeignClient(name = "candidato-service", url = "${candidato-service.url}")
+@FeignClient(name = "candidato-service")
 public interface CandidatoFeignClient {
     @GetMapping("/api/v1/candidatos")
     List<CandidatoInfoDTO> findAll();

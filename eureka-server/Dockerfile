@@ -9,6 +9,8 @@ COPY .mvn .mvn
 COPY mvnw .
 COPY mvnw.cmd .
 
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
+
 # Descargar dependencias
 RUN ./mvnw dependency:go-offline -B
 
