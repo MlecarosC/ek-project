@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.eureka.api.config.BaseConfig;
-import com.eureka.api.dto.CandidateDTO;
+import com.eureka.api.dto.CandidatoDTO;
 import com.eureka.api.model.Candidato;
 
 import io.restassured.http.ContentType;
@@ -31,7 +31,7 @@ public class CandidatoContorllerTest extends BaseConfig {
      */
     @Test
     void testCreateCandidate_Success() {
-        CandidateDTO candidateDTO = candidateFixture.createValidCandidateDTO();
+        CandidatoDTO candidateDTO = candidateFixture.createValidCandidateDTO();
 
         // Usamos RestAssured para enviar la solicitud POST
         given()
@@ -68,7 +68,7 @@ public class CandidatoContorllerTest extends BaseConfig {
     @DisplayName("POST /api/v1/candidatos - Email duplicado retorna 409 CONFLICT")
     void testCreateCandidate_DuplicatedEmail() {
         // Arrange: Crear candidato inicial
-        CandidateDTO candidateDTO = candidateFixture.createValidCandidateDTO();
+        CandidatoDTO candidateDTO = candidateFixture.createValidCandidateDTO();
         Candidato existingCandidate = new Candidato();
         existingCandidate.setNombre(candidateDTO.getNombre());
         existingCandidate.setApellidos(candidateDTO.getApellidos());
@@ -88,7 +88,7 @@ public class CandidatoContorllerTest extends BaseConfig {
         candidatoRepository.save(existingCandidate);
 
         // Act & Assert: Intentar crear otro candidato con el mismo email
-        CandidateDTO duplicateDTO = candidateFixture.createValidCandidateDTO();
+        CandidatoDTO duplicateDTO = candidateFixture.createValidCandidateDTO();
         duplicateDTO.setNombre("Otro Nombre");
         
         given()
@@ -111,7 +111,7 @@ public class CandidatoContorllerTest extends BaseConfig {
     @Test
     @DisplayName("POST /api/v1/candidatos - Validación de campos obligatorios")
     void testCreateCandidate_ValidationErrors() {
-        CandidateDTO invalidDTO = new CandidateDTO();
+        CandidatoDTO invalidDTO = new CandidatoDTO();
         invalidDTO.setEmail("invalid-email");
         // Falta nombre, apellidos, etc.
 

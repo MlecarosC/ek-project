@@ -12,30 +12,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eureka.api.dto.CandidateDTO;
+import com.eureka.api.dto.CandidatoDTO;
 import com.eureka.api.exception.NotFoundException;
-import com.eureka.api.service.CandidateService;
+import com.eureka.api.service.CandidatoService;
 
 import jakarta.validation.Valid;
 
 
 @RestController
 @RequestMapping("/api/v1/candidatos")
-public class CandidateController {
-    private final CandidateService candidateService;
+public class CandidatoController {
+    private final CandidatoService candidateService;
 
-    public CandidateController(CandidateService candidateService) {
+    public CandidatoController(CandidatoService candidateService) {
         this.candidateService = candidateService;
     }
     
     @PostMapping
-    public ResponseEntity<CandidateDTO> save(@RequestBody @Valid CandidateDTO candidateDTO) {
+    public ResponseEntity<CandidatoDTO> save(@RequestBody @Valid CandidatoDTO candidateDTO) {
         return new ResponseEntity<>(candidateService.save(candidateDTO), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<CandidateDTO>> findAll() {
-        List<CandidateDTO> candidatesDTO = candidateService.findAll();
+    public ResponseEntity<List<CandidatoDTO>> findAll() {
+        List<CandidatoDTO> candidatesDTO = candidateService.findAll();
         if (candidatesDTO.isEmpty()) {
             throw new NotFoundException("No se encontraron candidatos");
         }
@@ -43,7 +43,7 @@ public class CandidateController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CandidateDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<CandidatoDTO> findById(@PathVariable Integer id) {
         return candidateService.findById(id).map(
             ResponseEntity::ok
         ).orElseThrow(

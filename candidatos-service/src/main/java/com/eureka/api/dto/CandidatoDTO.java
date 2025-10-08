@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class CandidateDTO {
+public class CandidatoDTO {
     private Integer id;
 
     @NotBlank(message = "El nombre es obligatorio")

@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.eureka.api.fixtures.CandidateFixture;
+import com.eureka.api.fixtures.CandidatoFixture;
 import com.eureka.api.repository.CandidatoRepository;
 
 import io.restassured.RestAssured;
@@ -25,7 +25,7 @@ public abstract class BaseConfig {
     protected CandidatoRepository candidatoRepository;
 
     @Autowired
-    protected CandidateFixture candidateFixture;
+    protected CandidatoFixture candidateFixture;
 
     protected static final String BASE_PATH = "/api/v1/candidatos";
 

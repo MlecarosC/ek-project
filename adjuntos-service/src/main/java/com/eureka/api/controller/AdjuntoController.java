@@ -32,11 +32,8 @@ public class AdjuntoController {
     }
 
     @GetMapping("/candidato/{id}")
-    public ResponseEntity<List<ResponseAdjuntoDTO>> getDocumentosByCandidatoId(@PathVariable Integer id) {
-        List<ResponseAdjuntoDTO> documentosDTO = candidateService.getDocumentosByCandidatoId(id);
-        if (documentosDTO.isEmpty()) {
-            throw new NotFoundException("No se encontraron adjuntos con el ID de candidato dado " + id);
-        }
+    public ResponseEntity<ResponseAdjuntoDTO> getDocumentosByCandidatoId(@PathVariable Integer id) {
+        ResponseAdjuntoDTO documentosDTO = candidateService.getDocumentosByCandidatoId(id);
         return ResponseEntity.ok(documentosDTO);
     }
 }

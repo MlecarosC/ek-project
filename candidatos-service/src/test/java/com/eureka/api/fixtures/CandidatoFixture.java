@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.eureka.api.dto.CandidateDTO;
+import com.eureka.api.dto.CandidatoDTO;
 import com.eureka.api.model.Candidato;
 import com.eureka.api.repository.CandidatoRepository;
 
 @Component
-public class CandidateFixture {
+public class CandidatoFixture {
 
     @Autowired
     private CandidatoRepository candidatoRepository;
@@ -17,8 +17,8 @@ public class CandidateFixture {
     /**
      * Crea y devuelve un CandidateDTO válido.
      */
-    public CandidateDTO createValidCandidateDTO() {
-        CandidateDTO dto = new CandidateDTO();
+    public CandidatoDTO createValidCandidateDTO() {
+        CandidatoDTO dto = new CandidatoDTO();
         dto.setNombre("Juan");
         dto.setApellidos("Pérez");
         dto.setEmail("juan.perez@test.com");
