@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+            routes:
+              - id: candidato-service
+                uri: lb://candidato-service
+                predicates:
+                  - Path=/api/v1/candidatos/**
+              - id: adjunto-service
+                uri: lb://adjunto-service
+                predicates:
+                  - Path=/api/v1/adjuntos/**

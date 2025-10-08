@@ -1,64 +1,130 @@
 services:
+  # Servicio Eureka Server
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - eureka-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
   # Servicio de Base de Datos MySQL
   mysql:
     image: mysql:8.0
     container_name: eureka-mysql
     restart: always
     environment:
-      # Variables de entorno para configurar MySQL
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: eureka-tarea1-db
+      MYSQL_DATABASE: eureka-project-db
       MYSQL_USER: eureka_user
       MYSQL_PASSWORD: eureka_pass
     ports:
-      # Puerto del host:Puerto del contenedor
-      - "3307:3306"  # Usando 3307 para evitar conflicto si tienes MySQL local
+      - "3307:3306"
     volumes:
-      # Persistir datos de MySQL en tu máquina
       - mysql_data:/var/lib/mysql
-      # Cargar scripts SQL automáticamente
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./candidatos-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./candidatos-service/src/main/resources/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     networks:
       - eureka-network
     healthcheck:
-      # Verificar que MySQL esté listo
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysql", "-u", "eureka_user", "-peureka_pass", "-e", "SELECT 1 FROM candidatos LIMIT 1;", "eureka-project-db"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 40s
 
-  # Servicio de la API Spring Boot
-  api:
+  # Servicio de candidatos Spring Boot
+  api-candidatos:
     build:
-      context: .
+      context: ./candidatos-service
       dockerfile: Dockerfile
-    container_name: eureka-api
+    container_name: eureka-candidatos-service
     restart: always
     ports:
       - "8080:8080"
     environment:
-      # Variables de entorno para Spring Boot
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-tarea1-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: eureka_user
       SPRING_DATASOURCE_PASSWORD: eureka_pass
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_JPA_SHOW_SQL: "true"
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
-      # Desactivar carga automática de scripts (ya los cargó MySQL)
       SPRING_SQL_INIT_MODE: never
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+      # Reintentos de conexión a Eureka
+      EUREKA_CLIENT_REGISTRY_FETCH_INTERVAL_SECONDS: 5
+      EUREKA_CLIENT_INITIAL_INSTANCE_INFO_REPLICATION_INTERVAL_SECONDS: 5
     depends_on:
       mysql:
+        condition: service_healthy
+      eureka-server:
         condition: service_healthy
     networks:
       - eureka-network
 
-# Volumen para persistir datos de MySQL
+  # Servicio de adjuntos Spring Boot
+  api-adjuntos:
+    build:
+      context: ./adjuntos-service
+      dockerfile: Dockerfile
+    container_name: eureka-adjuntos-service
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: eureka_user
+      SPRING_DATASOURCE_PASSWORD: eureka_pass
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING_SQL_INIT_MODE: never
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+      # Reintentos de conexión a Eureka
+      EUREKA_CLIENT_REGISTRY_FETCH_INTERVAL_SECONDS: 5
+      EUREKA_CLIENT_INITIAL_INSTANCE_INFO_REPLICATION_INTERVAL_SECONDS: 5
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-network
+  api-gateway:
+    build:
+      context: ./gateway-server
+      dockerfile: Dockerfile
+    container_name: eureka-gateway
+    restart: always
+    ports:
+      - "8090:8090"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api-gateway
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-network
 volumes:
   mysql_data:
 
-# Red para que los contenedores se comuniquen
 networks:
   eureka-network:
     driver: bridge
