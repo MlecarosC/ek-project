@@ -39,6 +39,7 @@ Este proyecto implementa una arquitectura de microservicios completa que incluye
 ### Testing
 - **JUnit 5**
 - **Testcontainers** (MySQL)
+- **WireMock**
 - **RestAssured**
 - **Hamcrest**
 
@@ -415,6 +416,7 @@ cd adjuntos-service
 **Adjunto Service:**
 - Obtener todos los adjuntos
 - Obtener adjuntos por ID de candidato
+- WireMock para mockear llamadas al servicio de candidatos
 - Adjuntos no encontrados (404)
 - Verificar estructura de respuesta
 - Aislamiento de documentos por candidato
