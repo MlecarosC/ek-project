@@ -49,8 +49,8 @@ services:
       dockerfile: Dockerfile
     container_name: eureka-candidatos-service
     restart: always
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: eureka_user
@@ -81,8 +81,8 @@ services:
       dockerfile: Dockerfile
     container_name: eureka-adjuntos-service
     restart: always
-    ports:
-      - "8081:8081"
+    expose:
+      - "8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eureka-project-db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: eureka_user
