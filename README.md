@@ -123,6 +123,31 @@ ek-tarea1/
 - **Docker Desktop** (con Docker Compose)
 - **Git**
 
+## Configuración de CORS
+
+El API Gateway utiliza la variable de entorno `CORS_ALLOWED_ORIGINS` para controlar qué dominios pueden acceder a la API.
+
+### Desarrollo Local
+Por defecto, permite solicitudes desde `http://localhost:4200` (Angular en desarrollo).
+
+### Producción
+Configura la variable de entorno con tus dominios de producción:
+```bash
+# Ejemplo para un solo dominio
+CORS_ALLOWED_ORIGINS=https://tuapp.com
+
+# Ejemplo para múltiples dominios (separados por coma, sin espacios)
+CORS_ALLOWED_ORIGINS=https://tuapp.com,https://www.tuapp.com,https://admin.tuapp.com
+```
+
+### Docker Compose
+Edita el archivo `docker-compose.yml` y modifica la variable de entorno:
+```yaml
+api-gateway:
+  environment:
+    CORS_ALLOWED_ORIGINS: "https://tudominio.com,https://www.tudominio.com"
+```
+
 ## Instalación y Configuración
 
 ### 1. Clonar el Repositorio
