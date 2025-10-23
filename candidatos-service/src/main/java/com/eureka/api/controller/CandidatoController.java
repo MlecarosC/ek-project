@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eureka.api.dto.CandidatoConAdjuntosDTO;
 import com.eureka.api.dto.CandidatoDTO;
 import com.eureka.api.exception.NotFoundException;
 import com.eureka.api.service.CandidatoService;
@@ -49,6 +50,22 @@ public class CandidatoController {
         ).orElseThrow(
             () -> new NotFoundException("No se encontró un candidato con el ID dado " + id)
         );
+    }
+
+    @GetMapping("/adjuntos")
+    public ResponseEntity<List<CandidatoConAdjuntosDTO>> findAllWithAdjuntos() {
+        List<CandidatoConAdjuntosDTO> candidatesDTO = candidateService.findAllWithAdjuntos();
+        if (candidatesDTO.isEmpty()) {
+            throw new NotFoundException("No se encontraron candidatos");
+        }
+        return ResponseEntity.ok(candidatesDTO);
+    }
+
+    @GetMapping("/{id}/adjuntos")
+    public ResponseEntity<CandidatoConAdjuntosDTO> findByIdWithAdjuntos(@PathVariable Integer id) {
+        return candidateService.findByIdWithAdjuntos(id)
+            .map(ResponseEntity::ok)
+            .orElseThrow(() -> new NotFoundException("No se encontró un candidato con el ID dado " + id));
     }
 
     @DeleteMapping("/{id}")

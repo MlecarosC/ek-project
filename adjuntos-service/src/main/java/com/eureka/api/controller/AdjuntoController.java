@@ -8,32 +8,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eureka.api.dto.ResponseAdjuntoDTO;
+import com.eureka.api.dto.AdjuntoDTO;
 import com.eureka.api.exception.NotFoundException;
 import com.eureka.api.service.AdjuntoService;
-
 
 @RestController
 @RequestMapping("/api/v1/adjuntos")
 public class AdjuntoController {
-    private final AdjuntoService candidateService;
+    private final AdjuntoService adjuntoService;
 
-    public AdjuntoController(AdjuntoService candidateService) {
-        this.candidateService = candidateService;
+    public AdjuntoController(AdjuntoService adjuntoService) {
+        this.adjuntoService = adjuntoService;
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseAdjuntoDTO>> findAll() {
-        List<ResponseAdjuntoDTO> documentosDTO = candidateService.findAll();
-        if (documentosDTO.isEmpty()) {
+    public ResponseEntity<List<AdjuntoDTO>> findAll() {
+        List<AdjuntoDTO> adjuntosDTO = adjuntoService.findAll();
+        if (adjuntosDTO.isEmpty()) {
             throw new NotFoundException("No se encontraron adjuntos");
         }
-        return ResponseEntity.ok(documentosDTO);
+        return ResponseEntity.ok(adjuntosDTO);
     }
 
-    @GetMapping("/candidato/{id}")
-    public ResponseEntity<ResponseAdjuntoDTO> getDocumentosByCandidatoId(@PathVariable Integer id) {
-        ResponseAdjuntoDTO documentosDTO = candidateService.getDocumentosByCandidatoId(id);
-        return ResponseEntity.ok(documentosDTO);
+    @GetMapping("/candidato/{candidatoId}")
+    public ResponseEntity<List<AdjuntoDTO>> getAdjuntosByCandidatoId(@PathVariable Integer candidatoId) {
+        List<AdjuntoDTO> adjuntosDTO = adjuntoService.getAdjuntosByCandidatoId(candidatoId);
+        if (adjuntosDTO.isEmpty()) {
+            throw new NotFoundException("No se encontraron adjuntos para el candidato con ID " + candidatoId);
+        }
+        return ResponseEntity.ok(adjuntosDTO);
     }
 }
