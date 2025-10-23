@@ -95,7 +95,7 @@ public class CandidatoService {
         
         // Agrupar adjuntos por candidatoId
         Map<Integer, List<AdjuntoDTO>> adjuntosPorCandidato = todosLosAdjuntos.stream()
-            .collect(Collectors.groupingBy(AdjuntoDTO::getCandidatoId));
+            .collect(Collectors.groupingBy(AdjuntoDTO::getId));
         
         // Mapear candidatos con sus adjuntos
         return candidatos.stream()
