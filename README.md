@@ -206,27 +206,36 @@ docker-compose down -v
 
 Todos los servicios están disponibles a través del API Gateway en el puerto **8090**:
 
-#### Gestión de Candidatos
+#### Gestión de Candidatos (sin adjuntos)
 ```
 # Crear un candidato
 POST http://localhost:8090/api/v1/candidatos
 
-# Obtener todos los candidatos
+# Obtener todos los candidatos (solo información básica)
 GET http://localhost:8090/api/v1/candidatos
 
-# Obtener candidato por ID
+# Obtener candidato por ID (solo información básica)
 GET http://localhost:8090/api/v1/candidatos/{id}
 
 # Eliminar candidato por ID
 DELETE http://localhost:8090/api/v1/candidatos/{id}
 ```
 
-#### Gestión de Documentos
+#### Gestión de Candidatos con Adjuntos
 ```
-# Obtener todos los adjuntos
+# Obtener todos los candidatos con sus adjuntos
+GET http://localhost:8090/api/v1/candidatos/adjuntos
+
+# Obtener un candidato con sus adjuntos por ID
+GET http://localhost:8090/api/v1/candidatos/{id}/adjuntos
+```
+
+#### Gestión de Adjuntos (acceso directo)
+```
+# Obtener todos los adjuntos del sistema
 GET http://localhost:8090/api/v1/adjuntos
 
-# Obtener adjuntos por ID de candidato
+# Obtener adjuntos de un candidato específico
 GET http://localhost:8090/api/v1/adjuntos/candidato/{id}
 ```
 
@@ -234,10 +243,15 @@ GET http://localhost:8090/api/v1/adjuntos/candidato/{id}
 
 **Candidato Service** (Puerto 8080):
 ```http
+# Sin adjuntos
 GET http://localhost:8080/api/v1/candidatos
 POST http://localhost:8080/api/v1/candidatos
 GET http://localhost:8080/api/v1/candidatos/{id}
 DELETE http://localhost:8080/api/v1/candidatos/{id}
+
+# Con adjuntos
+GET http://localhost:8080/api/v1/candidatos/adjuntos
+GET http://localhost:8080/api/v1/candidatos/{id}/adjuntos
 ```
 
 **Adjunto Service** (Puerto 8081):
@@ -295,29 +309,158 @@ curl -X POST http://localhost:8090/api/v1/candidatos \
 }
 ```
 
-### 2. Obtener todos los candidatos (vía Gateway)
+### 2. Obtener todos los candidatos sin adjuntos (vía Gateway)
 
 **Request:**
 ```bash
-curl -X GET http://localhost:8090/api/v1/candidatos
-```
-
-### 3. Obtener documentos de un candidato (vía Gateway)
-
-**Request:**
-```bash
-curl -X GET http://localhost:8090/api/v1/adjuntos/candidato/1
+curl http://localhost:8090/api/v1/candidatos
 ```
 
 **Response:**
 ```json
 [
   {
+    "id": 1,
+    "nombre": "Juan",
+    "apellidos": "Perez",
+    "email": "juan.perez@email.com",
+    "telefono": "123456789",
+    "tipoDocumento": "DNI",
+    "numeroDocumento": "12345678",
+    "genero": "M",
+    "lugarNacimiento": "Buenos Aires",
+    "fechaNacimiento": "1990-01-01",
+    "direccion": "Calle Falsa 123",
+    "codigoPostal": "1000",
+    "pais": "Argentina",
+    "localizacion": "Buenos Aires",
+    "disponibilidadDesde": "2025-01-01",
+    "disponibilidadHasta": "2025-12-31"
+  }
+]
+```
+
+### 3. Obtener todos los candidatos con sus adjuntos (vía Gateway)
+
+**Request:**
+```bash
+curl http://localhost:8090/api/v1/candidatos/adjuntos
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Juan",
+    "apellidos": "Perez",
+    "email": "juan.perez@email.com",
+    "telefono": "123456789",
+    "tipoDocumento": "DNI",
+    "numeroDocumento": "12345678",
+    "genero": "M",
+    "lugarNacimiento": "Buenos Aires",
+    "fechaNacimiento": "1990-01-01",
+    "direccion": "Calle Falsa 123",
+    "codigoPostal": "1000",
+    "pais": "Argentina",
+    "localizacion": "Buenos Aires",
+    "disponibilidadDesde": "2025-01-01",
+    "disponibilidadHasta": "2025-12-31",
+    "adjuntos": [
+      {
+        "id": 1,
+        "candidatoId": 1,
+        "extension": "pdf",
+        "nombreArchivo": "cv_juan_perez.pdf"
+      },
+      {
+        "id": 2,
+        "candidatoId": 1,
+        "extension": "jpg",
+        "nombreArchivo": "photo_juan_perez.jpg"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "Maria",
+    "apellidos": "Lopez",
+    "email": "maria.lopez@email.com",
+    ...
+    "adjuntos": [
+      {
+        "id": 3,
+        "candidatoId": 2,
+        "extension": "pdf",
+        "nombreArchivo": "cv_maria_lopez.pdf"
+      }
+    ]
+  }
+]
+```
+
+### 4. Obtener un candidato específico con sus adjuntos (vía Gateway)
+
+**Request:**
+```bash
+curl http://localhost:8090/api/v1/candidatos/1/adjuntos
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Juan",
+  "apellidos": "Perez",
+  "email": "juan.perez@email.com",
+  "telefono": "123456789",
+  "tipoDocumento": "DNI",
+  "numeroDocumento": "12345678",
+  "genero": "M",
+  "lugarNacimiento": "Buenos Aires",
+  "fechaNacimiento": "1990-01-01",
+  "direccion": "Calle Falsa 123",
+  "codigoPostal": "1000",
+  "pais": "Argentina",
+  "localizacion": "Buenos Aires",
+  "disponibilidadDesde": "2025-01-01",
+  "disponibilidadHasta": "2025-12-31",
+  "adjuntos": [
+    {
+      "id": 1,
+      "candidatoId": 1,
+      "extension": "pdf",
+      "nombreArchivo": "cv_juan_perez.pdf"
+    },
+    {
+      "id": 2,
+      "candidatoId": 1,
+      "extension": "jpg",
+      "nombreArchivo": "photo_juan_perez.jpg"
+    }
+  ]
+}
+```
+
+### 5. Obtener solo los adjuntos de un candidato (vía Gateway)
+
+**Request:**
+```bash
+curl http://localhost:8090/api/v1/adjuntos/candidato/1
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
     "candidatoId": 1,
     "extension": "pdf",
     "nombreArchivo": "cv_juan_perez.pdf"
   },
   {
+    "id": 2,
     "candidatoId": 1,
     "extension": "jpg",
     "nombreArchivo": "photo_juan_perez.jpg"
@@ -325,11 +468,16 @@ curl -X GET http://localhost:8090/api/v1/adjuntos/candidato/1
 ]
 ```
 
-### 4. Eliminar un candidato (vía Gateway)
+### 6. Eliminar un candidato (vía Gateway)
 
 **Request:**
 ```bash
 curl -X DELETE http://localhost:8090/api/v1/candidatos/1
+```
+
+**Response:**
+```
+HTTP/1.1 204 No Content
 ```
 
 ## Manejo de Errores
