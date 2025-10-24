@@ -54,6 +54,37 @@ public class CandidatoService {
             .map(candidate -> modelMapper.map(candidate, CandidatoDTO.class));
     }
 
+    public CandidatoDTO update(Integer id, CandidatoDTO candidateDTO) {
+        Candidato existingCandidate = candidatoRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("No existe un candidato con el ID " + id));
+        
+        // Validar email único solo si es diferente al actual
+        if (!existingCandidate.getEmail().equals(candidateDTO.getEmail()) 
+            && candidatoRepository.existsByEmail(candidateDTO.getEmail())) {
+            throw new UniqueEmailException("Email existente");
+        }
+        
+        // Actualizar los campos
+        existingCandidate.setNombre(candidateDTO.getNombre());
+        existingCandidate.setApellidos(candidateDTO.getApellidos());
+        existingCandidate.setEmail(candidateDTO.getEmail());
+        existingCandidate.setTelefono(candidateDTO.getTelefono());
+        existingCandidate.setTipoDocumento(candidateDTO.getTipoDocumento());
+        existingCandidate.setNumeroDocumento(candidateDTO.getNumeroDocumento());
+        existingCandidate.setGenero(candidateDTO.getGenero());
+        existingCandidate.setLugarNacimiento(candidateDTO.getLugarNacimiento());
+        existingCandidate.setFechaNacimiento(candidateDTO.getFechaNacimiento());
+        existingCandidate.setDireccion(candidateDTO.getDireccion());
+        existingCandidate.setCodigoPostal(candidateDTO.getCodigoPostal());
+        existingCandidate.setPais(candidateDTO.getPais());
+        existingCandidate.setLocalizacion(candidateDTO.getLocalizacion());
+        existingCandidate.setDisponibilidadDesde(candidateDTO.getDisponibilidadDesde());
+        existingCandidate.setDisponibilidadHasta(candidateDTO.getDisponibilidadHasta());
+        
+        Candidato updatedCandidate = candidatoRepository.save(existingCandidate);
+        return modelMapper.map(updatedCandidate, CandidatoDTO.class);
+    }
+
     public void deleteById(Integer id) {
         Candidato candidate = candidatoRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("No existe un candidato con el ID " + id));
