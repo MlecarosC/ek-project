@@ -118,6 +118,20 @@ ek-tarea1/
 └── README.md
 ```
 
+### Comunicación entre Microservicios
+
+El proyecto utiliza **OpenFeign** para la comunicación síncrona entre microservicios:
+
+- **Candidato Service** → **Adjunto Service**: 
+  - Cuando se consulta un candidato con adjuntos (`/candidatos/{id}/adjuntos`), el servicio de candidatos utiliza Feign Client para obtener los adjuntos del servicio correspondiente
+  - El cliente Feign (`AdjuntoFeignClient`) se registra automáticamente con Eureka para descubrimiento de servicios
+  - Si el servicio de adjuntos no responde o no encuentra datos, se devuelve una lista vacía
+
+**Ventajas:**
+- Desacoplamiento entre servicios
+- Balanceo de carga automático vía Eureka
+- Manejo de errores resiliente (fallback a lista vacía)
+
 ## Requisitos Previos
 
 - **Docker Desktop** (con Docker Compose)
@@ -221,6 +235,22 @@ GET http://localhost:8090/api/v1/candidatos/{id}
 DELETE http://localhost:8090/api/v1/candidatos/{id}
 ```
 
+#### Actualizar Candidato
+```
+# Actualizar un candidato existente
+PUT http://localhost:8090/api/v1/candidatos/{id}
+```
+
+**Request Body:** (mismo formato que POST)
+```json
+{
+  "nombre": "Juan Carlos",
+  "apellidos": "Pérez Actualizado",
+  "email": "juan.actualizado@email.com",
+  ...
+}
+```
+
 #### Gestión de Candidatos con Adjuntos
 ```
 # Obtener todos los candidatos con sus adjuntos
@@ -237,6 +267,12 @@ GET http://localhost:8090/api/v1/adjuntos
 
 # Obtener adjuntos de un candidato específico
 GET http://localhost:8090/api/v1/adjuntos/candidato/{id}
+
+# Crear adjuntos para un candidato
+POST http://localhost:8090/api/v1/adjuntos
+
+# Eliminar un adjunto específico
+DELETE http://localhost:8090/api/v1/adjuntos/{id}
 ```
 
 ### Acceso Directo a los Servicios
@@ -478,6 +514,80 @@ curl -X DELETE http://localhost:8090/api/v1/candidatos/1
 **Response:**
 ```
 HTTP/1.1 204 No Content
+```
+
+### 7. Actualizar un candidato existente (vía Gateway)
+
+**Request:**
+```bash
+curl -X PUT http://localhost:8090/api/v1/candidatos/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Juan Carlos",
+    "apellidos": "Pérez Actualizado",
+    "email": "juan.perez@email.com",
+    "telefono": "+56912345678",
+    "tipoDocumento": "DNI",
+    "numeroDocumento": "12345678",
+    "genero": "M",
+    "lugarNacimiento": "Buenos Aires",
+    "fechaNacimiento": "1990-01-01",
+    "direccion": "Calle Actualizada 456",
+    "codigoPostal": "1000",
+    "pais": "Argentina",
+    "localizacion": "Buenos Aires",
+    "disponibilidadDesde": "2025-01-01",
+    "disponibilidadHasta": "2025-12-31"
+  }'
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Juan Carlos",
+  "apellidos": "Pérez Actualizado",
+  "email": "juan.perez@email.com",
+  ...
+}
+```
+
+### 8. Crear adjuntos para un candidato (vía Gateway)
+
+**Request:**
+```bash
+curl -X POST http://localhost:8090/api/v1/adjuntos \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "candidatoId": 1,
+      "extension": "pdf",
+      "nombreArchivo": "certificado_nuevo.pdf"
+    },
+    {
+      "candidatoId": 1,
+      "extension": "jpg",
+      "nombreArchivo": "diploma.jpg"
+    }
+  ]'
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 9,
+    "candidatoId": 1,
+    "extension": "pdf",
+    "nombreArchivo": "certificado_nuevo.pdf"
+  },
+  {
+    "id": 10,
+    "candidatoId": 1,
+    "extension": "jpg",
+    "nombreArchivo": "diploma.jpg"
+  }
+]
 ```
 
 ## Manejo de Errores
