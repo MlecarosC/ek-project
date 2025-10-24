@@ -5,12 +5,20 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.api.dto.AdjuntoDTO;
 import com.eureka.api.exception.NotFoundException;
 import com.eureka.api.service.AdjuntoService;
+
+import com.eureka.api.dto.AdjuntoCreateDTO;
+
+
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/v1/adjuntos")
@@ -37,5 +45,11 @@ public class AdjuntoController {
             throw new NotFoundException("No se encontraron adjuntos para el candidato con ID " + candidatoId);
         }
         return ResponseEntity.ok(adjuntosDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<List<AdjuntoDTO>> createAdjuntos(@RequestBody @Valid List<AdjuntoCreateDTO> adjuntosDTO) {
+        List<AdjuntoDTO> createdAdjuntos = adjuntoService.createAdjuntos(adjuntosDTO);
+        return ResponseEntity.ok(createdAdjuntos);
     }
 }
